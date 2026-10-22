@@ -446,3 +446,9 @@
   cursor: not-allowed;
   background-color: #f3f4f6;
 }
+
+/* สไตล์สำหรับตำแหน่งใหม่ๆ ที่เพิ่มเข้ามาแบบ Dynamic */
+.role-other {
+  background-color: #fef3c7; /* สีเหลืองส้มอ่อน */
+  color: #d97706; /* สีส้มทอง */
+}

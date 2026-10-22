@@ -1,4 +1,13 @@
+// ==============================================================================
 // ไฟล์: front_end/src/components/Sidebar.jsx
+// ระบบ: แถบเมนูด้านข้างพร้อมการตรวจสอบสิทธิ์แบบไดนามิก (Dynamic RBAC Navigation)
+// วัตถุประสงค์:
+//   - อ่านข้อมูลผู้ใช้งานและรายการ permissions จาก `sessionStorage`
+//   - กรองและแสดงผลเฉพาะเมนูที่ผู้ใช้นั้นได้รับอนุญาตให้เข้าถึง
+//   - หากเป็น Admin (role_id = 1) จะสามารถมองเห็นและเข้าถึงได้ทุกเมนูอัตโนมัติ
+//   - มีปุ่ม Logout พร้อมกล่องยืนยัน SweetAlert2
+// ==============================================================================
+
 import React from "react";
 import "./Sidebar.css";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -10,12 +19,19 @@ import {
   FaUsers,
   FaChartBar,
   FaSignOutAlt,
+  FaMotorcycle,
+  FaTag,
+  FaBoxes,
+  FaMobileAlt
 } from "react-icons/fa";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: ออกจากระบบ เคลียร์ Session และเปลี่ยนหน้ากลับไปที่ /login
+  // ----------------------------------------------------------------------------
   const handleLogoutClick = () => {
     Swal.fire({
       title: 'ยืนยันการออกจากระบบ?',
@@ -35,31 +51,43 @@ function Sidebar() {
     });
   };
 
-  // ดึงข้อมูลผู้ใช้งานที่ล็อกอินอยู่ ดึง role_id
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const userRoleId = user?.role_id || 0;
+  // ดึงข้อมูลผู้ใช้งานที่ล็อกอินอยู่จาก sessionStorage
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const userRoleId = Number(user?.role_id) || 0;
+  const userPermissions = Array.isArray(user?.permissions) ? user.permissions : [];
 
-  // 1. สร้างรายการเมนูทั้งหมด และกำหนดว่า Role ไหนเห็นได้บ้าง
+  // ----------------------------------------------------------------------------
+  // ตารางเมนูทั้งหมดในระบบ พร้อมระบุ Permission Key ที่ต้องใช้ในการเข้าถึง
+  // ----------------------------------------------------------------------------
   const allMenuItems = [
-    { path: "/pos", label: "POS", icon: <FaCashRegister />, allowedRoleIds: [1, 2] }, 
-    //{ path: "/sales", label: "หน้าขาย", icon: <FaCashRegister />, allowedRoleIds: [1, 2] }, 
-    { path: "/products", label: "สินค้า", icon: <FaBoxOpen />, allowedRoleIds: [1] }, 
-    { path: "/stocks", label: "สต็อก", icon: <FaWarehouse />, allowedRoleIds: [1] }, 
-    { path: "/employees", label: "พนักงาน", icon: <FaUsers />, allowedRoleIds: [1] }, 
-    { path: "/roles", label: "สิทธิ์", icon: <FaUsers />, allowedRoleIds: [1] },
-    { path: "/reports", label: "รายงาน", icon: <FaChartBar />, allowedRoleIds: [1] }, 
-    
-    
-    
+    { path: "/pos", label: "POS หน้าร้าน", icon: <FaCashRegister />, permission: "menu_pos", fallbackRoleIds: [1, 2] }, 
+    { path: "/delivery", label: "การจัดส่ง (Delivery)", icon: <FaMotorcycle />, permission: "menu_delivery", fallbackRoleIds: [1] },
+    { path: "/rider-delivery", label: "ไรเดอร์ส่งของ (Mobile)", icon: <FaMobileAlt />, permission: "menu_pos", fallbackRoleIds: [1, 2] },
+    { path: "/promotions", label: "จัดการโปรโมชั่น", icon: <FaTag />, permission: "menu_promotions", fallbackRoleIds: [1] },
+    { path: "/procurement", label: "จัดซื้อวัตถุดิบ", icon: <FaBoxes />, permission: "menu_procurement", fallbackRoleIds: [1] },
+    { path: "/products", label: "จัดการสินค้า", icon: <FaBoxOpen />, permission: "menu_products", fallbackRoleIds: [1] }, 
+    { path: "/stocks", label: "สต็อก/วัตถุดิบ", icon: <FaWarehouse />, permission: "menu_stocks", fallbackRoleIds: [1] }, 
+    { path: "/employees", label: "พนักงาน", icon: <FaUsers />, permission: "menu_employees", fallbackRoleIds: [1] }, 
+    { path: "/roles", label: "จัดการสิทธิ์", icon: <FaUsers />, permission: "menu_roles", fallbackRoleIds: [1] },
+    { path: "/reports", label: "รายงานผลการขาย", icon: <FaChartBar />, permission: "menu_reports", fallbackRoleIds: [1] }, 
   ];
 
-  // 3. กรองเมนูโดยเช็คว่า role_id ของคนที่ล็อกอิน ตรงกับ allowedRoleIds ไหม
-  const authorizedMenus = allMenuItems.filter(item => item.allowedRoleIds.includes(userRoleId));
+  // ----------------------------------------------------------------------------
+  // การกรองเมนูตามสิทธิ์ (Permission Check):
+  // 1. ถ้าเป็น Admin (role_id = 1) -> ผ่านทุกเมนู
+  // 2. ถ้าใน permissions array ของผู้ใช้มี permission key ตรงกับเมนูนั้น -> ผ่าน
+  // 3. ถ้าตรงกับ fallback role id เดิม -> ผ่าน
+  // ----------------------------------------------------------------------------
+  const authorizedMenus = allMenuItems.filter(item => {
+    if (userRoleId === 1 || user?.role === 'Admin') return true;
+    if (userPermissions.includes(item.permission)) return true;
+    return item.fallbackRoleIds.includes(userRoleId);
+  });
 
   return (
     <nav className="sidebar">
       <ul className="side-links">
-        {/* 3. นำเมนูที่กรองแล้ว (authorizedMenus) มาวนลูปแสดงผล */}
+        {/* แสดงเฉพาะเมนูที่ผ่านการตรวจสอบสิทธิ์แล้ว */}
         {authorizedMenus.map((item) => (
           <li
             key={item.path}
@@ -72,6 +100,7 @@ function Sidebar() {
         ))}
       </ul>
 
+      {/* ส่วนแสดงข้อมูลโปรไฟล์ผู้ใช้งาน และปุ่ม Logout */}
       <div className="account-section">
         <div className="account">
           <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>

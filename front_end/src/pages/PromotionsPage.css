@@ -1,0 +1,480 @@
+/* =========================================
+   ไฟล์: front_end/src/pages/PromotionsPage.css
+   สไตล์หน้าจอจัดการโปรโมชั่น (Promotion Management)
+   ========================================= */
+
+.promo-page-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 40px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+}
+
+.promo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.promo-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.promo-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.btn-add-promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25);
+}
+
+.btn-add-promo:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Grid */
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.promo-card {
+  background-color: white;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.promo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.promo-card.disabled {
+  opacity: 0.65;
+  background-color: #f8fafc;
+}
+
+.promo-card.expired {
+  border-color: #cbd5e1;
+}
+
+.promo-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.promo-badge-percent {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.btn-toggle {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.btn-toggle.active {
+  color: #10b981;
+}
+
+.btn-toggle svg {
+  font-size: 18px;
+}
+
+.promo-card-title {
+  margin: 0 0 6px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.promo-card-desc {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.promo-dates {
+  font-size: 12px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tag-expired {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.promo-products-box {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.products-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.products-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.prod-promo-pill {
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.promo-card-footer {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+
+.btn-promo-edit,
+.btn-promo-delete {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-promo-edit {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.btn-promo-edit:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-promo-delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-promo-delete:hover {
+  background-color: #fecaca;
+}
+
+/* Modal */
+.promo-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.promo-modal-box {
+  background-color: white;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+}
+
+.promo-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.promo-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.modal-sub {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.promo-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1e293b;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon-suffix {
+  position: absolute;
+  right: 12px;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Products selection grid */
+.products-selection-section {
+  margin-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+}
+
+.selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-title-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.quick-btn-group {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-text:hover {
+  text-decoration: underline;
+}
+
+.products-grid-select {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.product-select-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.product-select-card:hover {
+  background-color: #f1f5f9;
+}
+
+.product-select-card.selected {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.prod-select-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.p-price {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.p-price del {
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.p-price strong {
+  color: #ef4444;
+}
+
+/* Modal Footer */
+.promo-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-save {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background-color: #dc2626;
+}
+
+.promo-loading,
+.promo-empty {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  background-color: white;
+  border-radius: 12px;
+  color: #64748b;
+}

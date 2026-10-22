@@ -1,50 +1,97 @@
+// ==============================================================================
 // ไฟล์: front_end/src/pages/EmployeesPage.jsx
+// ระบบ: การจัดการข้อมูลพนักงาน (Employee Management UI)
+// วัตถุประสงค์:
+//   - จัดการข้อมูลพนักงาน (เพิ่ม, แก้ไข, ลบ, ค้นหา, แบ่งหน้า)
+//   - โหลดตำแหน่งแบบไดนามิกจากฐานข้อมูล (Dynamic Roles) เพื่อให้ตำแหน่งที่เพิ่งสร้างใหม่แสดงใน Dropdown ทันที
+//   - สร้างรหัสพนักงานอัตโนมัติ (Auto-increment E01, E02...)
+// ==============================================================================
+
 import React, { useState, useEffect } from 'react';
 import './EmployeesPage.css';
 import { FaPlus, FaEdit, FaTrash, FaTimes, FaEye, FaEyeSlash, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function EmployeesPage() {
+  // ----------------------------------------------------------------------------
+  // State Management:
+  // - employees: รายชื่อพนักงานทั้งหมด
+  // - roles: รายชื่อตำแหน่งที่ดึงแบบไดนามิกจากตาราง `roles`
+  // - showModal: ควบคุมการแสดง Pop-up เพิ่ม/แก้ไข
+  // - isEditing: ระบุสถานะว่ากำลังสร้างใหม่หรือแก้ไข
+  // - showPassword: สลับการซ่อน/แสดงรหัสผ่านในฟอร์ม
+  // - searchTerm: ข้อความค้นหา
+  // - currentPage: หน้าปัจจุบันของการแบ่งหน้า (Pagination)
+  // ----------------------------------------------------------------------------
   const [employees, setEmployees] = useState([]);
+  const [roles, setRoles] = useState([]); 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false); 
   const [showPassword, setShowPassword] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // ปรับหน้าที่แสดง
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 8; // แสดงหน้าละ 8 คน
 
   const [formData, setFormData] = useState({
-    employee_id: '', username: '', password: '', first_name: '', last_name: '', role_id: 2, phone: '', is_active: true
+    employee_id: '', 
+    username: '', 
+    password: '', 
+    first_name: '', 
+    last_name: '', 
+    role_id: 2, 
+    phone: '', 
+    is_active: true
   });
 
   useEffect(() => { 
     fetchEmployees(); 
+    fetchRoles(); // ดึงตำแหน่งทั้งหมดตอนโหลดหน้าเว็บ
   }, []);
 
+  // เมื่อพิมพ์ค้นหา ให้กลับมาหน้า 1 เสมอ
   useEffect(() => { 
     setCurrentPage(1); 
   }, [searchTerm]);
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: ดึงข้อมูลพนักงานทั้งหมด
+  // ----------------------------------------------------------------------------
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/employees');
+      const response = await fetch('/api/employees');
       if (response.ok) setEmployees(await response.json());
-    } catch (error) { console.error('Error:', error); }
+    } catch (error) { console.error('Error fetching employees:', error); }
+  };
+
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: ดึงตำแหน่งทั้งหมดจาก Database (รวมตำแหน่งใหม่ที่เพิ่มเข้ามาจาก RolesPage)
+  // ----------------------------------------------------------------------------
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch('/api/roles');
+      if (response.ok) {
+        const data = await response.json();
+        setRoles(data);
+      }
+    } catch (error) { console.error('Error fetching roles:', error); }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // จัดการค่า Boolean ของสถานะ
+    // แปลงค่า Boolean ของสถานะ และ Integer ของ role_id ให้ตรงกับประเภทข้อมูลใน Database
     if (name === 'is_active') {
       setFormData({ ...formData, [name]: value === 'true' });
+    } else if (name === 'role_id') {
+      setFormData({ ...formData, [name]: parseInt(value, 10) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  // สร้างรหัสพนักงานอัตโนมัติ (Auto ID)
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: สร้างรหัสพนักงานอัตโนมัติ (เช่น E01 -> E02 -> E03...)
+  // ----------------------------------------------------------------------------
   const generateNextEmpId = () => {
     if (employees.length === 0) return 'E01';
     const numericIds = employees.map(emp => parseInt(emp.employee_id.replace(/[^0-9]/g, ''), 10)).filter(num => !isNaN(num));
@@ -52,15 +99,19 @@ function EmployeesPage() {
     return `E${(Math.max(...numericIds) + 1).toString().padStart(2, '0')}`;
   };
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: เปิด Modal เพิ่มพนักงานใหม่
+  // ----------------------------------------------------------------------------
   const handleAddClick = () => {
     setIsEditing(false);
+    const defaultRoleId = roles.length > 0 ? roles[0].role_id : 2;
     setFormData({ 
       employee_id: generateNextEmpId(), 
       username: '', 
       password: '', 
       first_name: '', 
       last_name: '', 
-      role_id: 2, 
+      role_id: defaultRoleId, 
       phone: '', 
       is_active: true 
     });
@@ -68,9 +119,11 @@ function EmployeesPage() {
     setShowModal(true);
   };
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: เปิด Modal แก้ไขพนักงานเดิม
+  // ----------------------------------------------------------------------------
   const handleEditClick = (emp) => {
     setIsEditing(true);
-    //  ดึงข้อมูลเดิมมาใส่ฟอร์ม รวมถึงรหัสผ่าน (password) ด้วย
     setFormData({ 
       employee_id: emp.employee_id,
       username: emp.username,
@@ -85,14 +138,18 @@ function EmployeesPage() {
     setShowModal(true);
   };
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: บันทึกข้อมูลพนักงาน (POST / PUT)
+  // ----------------------------------------------------------------------------
   const handleSaveEmployee = async (e) => {
     e.preventDefault();
-    const url = isEditing ? `http://localhost:5000/api/employees/${formData.employee_id}` : 'http://localhost:5000/api/employees';
+    const url = isEditing ? `/api/employees/${formData.employee_id}` : '/api/employees';
     const method = isEditing ? 'PUT' : 'POST';
 
     try {
       const response = await fetch(url, {
-        method: method, headers: { 'Content-Type': 'application/json' },
+        method: method, 
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
       if (response.ok) {
@@ -108,13 +165,22 @@ function EmployeesPage() {
     }
   };
 
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: ลบพนักงาน
+  // ----------------------------------------------------------------------------
   const handleDelete = (id, firstName) => {
     Swal.fire({
-      title: 'ยืนยันการลบ?', text: `คุณต้องการลบพนักงาน "${firstName}" ใช่หรือไม่?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', cancelButtonColor: '#9ca3af', confirmButtonText: 'ยืนยันการลบ'
+      title: 'ยืนยันการลบ?', 
+      text: `คุณต้องการลบพนักงาน "${firstName}" ใช่หรือไม่?`, 
+      icon: 'warning', 
+      showCancelButton: true, 
+      confirmButtonColor: '#e74c3c', 
+      cancelButtonColor: '#9ca3af', 
+      confirmButtonText: 'ยืนยันการลบ'
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`http://localhost:5000/api/employees/${id}`, { method: 'DELETE' });
+          const response = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
           if (response.ok) {
             Swal.fire('ลบสำเร็จ!', 'ข้อมูลถูกลบออกจากระบบแล้ว', 'success');
             fetchEmployees(); 
@@ -126,7 +192,7 @@ function EmployeesPage() {
     });
   };
 
-  // ค้นหาพนักงาน
+  // กรองค้นหาพนักงาน
   const filteredEmployees = employees.filter((emp) => {
     const searchStr = searchTerm.toLowerCase();
     return (
@@ -138,9 +204,8 @@ function EmployeesPage() {
     );
   });
 
-  // แบ่งหน้า
+  // แบ่งหน้า (Pagination)
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-  // เพื่อดักบั๊กหน้าว่างเวลาลบข้อมูลหมดหน้า
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
@@ -149,8 +214,16 @@ function EmployeesPage() {
   const currentItems = filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // ดึง Badge สีตาม role_id
+  const getBadgeRoleClass = (roleId) => {
+    if (roleId === 1) return 'role-admin';
+    if (roleId === 2) return 'role-cashier';
+    return 'role-other';
+  };
+
   return (
     <div className="page-container">
+      {/* ส่วนหัวของหน้าจอพนักงาน */}
       <div className="page-header">
         <h2>จัดการพนักงาน</h2>
         <div className="header-actions">
@@ -162,6 +235,7 @@ function EmployeesPage() {
         </div>
       </div>
 
+      {/* ตารางแสดงข้อมูลพนักงาน */}
       <div className="table-container">
         <table className="data-table">
           <thead>
@@ -184,8 +258,8 @@ function EmployeesPage() {
                   <td>{emp.username}</td>
                   <td>{emp.phone || '-'}</td>
                   <td>
-                    <span className={`badge-role ${emp.role_id === 1 ? 'role-admin' : 'role-cashier'}`}>
-                      {emp.role_name || (emp.role_id === 1 ? 'Admin' : 'Cashier')}
+                    <span className={`badge-role ${getBadgeRoleClass(emp.role_id)}`}>
+                      {emp.role_name || `ตำแหน่ง #${emp.role_id}`}
                     </span>
                   </td>
                   <td>
@@ -219,6 +293,7 @@ function EmployeesPage() {
         )}
       </div>
 
+      {/* Modal หน้าต่างฟอร์มเพิ่ม/แก้ไขพนักงาน */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-box">
@@ -234,10 +309,14 @@ function EmployeesPage() {
                   <input type="text" name="employee_id" value={formData.employee_id} readOnly style={{ backgroundColor: '#f1f3f5', cursor: 'not-allowed', color: '#6c757d' }} />
                 </div>
                 <div className="form-group">
-                  <label>ตำแหน่ง</label>
+                  <label>ตำแหน่ง (Role)</label>
+                  {/* Dropdown ดึงตำแหน่งแบบ Dynamic จาก Database */}
                   <select name="role_id" value={formData.role_id} onChange={handleInputChange}>
-                    <option value={1}>Admin</option>
-                    <option value={2}>Cashier</option>
+                    {roles.map((r) => (
+                      <option key={r.role_id} value={r.role_id}>
+                        {r.role_name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -275,7 +354,6 @@ function EmployeesPage() {
                 <div className="form-group">
                   <label>รหัสผ่าน (Password)</label>
                   <div className="password-input-wrapper">
-                    {/*  รหัสผ่านกลับมาทำงานสมบูรณ์แล้ว */}
                     <input 
                       type={showPassword ? "text" : "password"} 
                       name="password" 

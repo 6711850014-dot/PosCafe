@@ -267,3 +267,161 @@
 .roles-btn-confirm:hover {
   background-color: #00acc1;
 }
+
+/* =========================================
+   สไตล์เพิ่มเติม: จัดการ Permissions ใน Roles
+   ========================================= */
+
+.roles-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ป้ายแสดงสิทธิ์ในตาราง */
+.roles-permissions-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.perm-tag {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.perm-tag-all {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+  font-weight: 600;
+}
+
+.perm-tag-none {
+  color: #94a3b8;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* ปรับขนาด Modal ให้กว้างขึ้นเพื่อแสดง Checkbox สิทธิ์ */
+.roles-modal-box-large {
+  max-width: 620px;
+}
+
+.modal-subtext {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.roles-form-row {
+  display: flex;
+  gap: 15px;
+}
+
+/* ส่วนเลือกสิทธิ์ใน Modal */
+.permissions-selector-section {
+  margin-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
+}
+
+.permissions-selector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.perm-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.btn-text-action {
+  background: none;
+  border: none;
+  color: #0284c7;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-text-action:hover {
+  text-decoration: underline;
+}
+
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.permission-item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+}
+
+.permission-item-card:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.permission-item-card.selected {
+  background-color: #f0fdf4;
+  border-color: #86efac;
+}
+
+.permission-item-card input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #10b981;
+}
+
+.perm-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.perm-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.perm-item-category {
+  font-size: 11px;
+  color: #64748b;
+}

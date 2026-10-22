@@ -1,0 +1,285 @@
+/* =========================================
+   ไฟล์: front_end/src/pages/DeliveryPage.css
+   สไตล์หน้าจอจัดการการจัดส่งสินค้า (Delivery Management)
+   ========================================= */
+
+.delivery-page-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 40px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+}
+
+.delivery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.delivery-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delivery-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.delivery-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-open-mobile-rider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f97316;
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.25);
+}
+
+.btn-open-mobile-rider:hover {
+  background-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+.btn-delivery-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delivery-refresh:hover {
+  background-color: #f1f5f9;
+}
+
+/* Filter Tabs */
+.delivery-filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.delivery-tab-btn {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.delivery-tab-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.delivery-tab-btn.active {
+  background-color: #0284c7;
+  color: white;
+  border-color: #0284c7;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+}
+
+/* Table Container */
+.delivery-table-container {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.delivery-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.delivery-table th,
+.delivery-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.delivery-table th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  color: #475569;
+}
+
+.delivery-table tbody tr:hover {
+  background-color: #fcfcfc;
+}
+
+.order-tag {
+  background-color: #f1f5f9;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.cust-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.phone-link {
+  color: #0284c7;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.phone-link:hover {
+  text-decoration: underline;
+}
+
+.address-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 250px;
+}
+
+.address-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #334155;
+}
+
+.map-link {
+  font-size: 11px;
+  color: #10b981;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.map-link:hover {
+  text-decoration: underline;
+}
+
+.amount-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.del-fee {
+  font-size: 11px;
+  color: #f97316;
+  font-weight: 600;
+}
+
+.order-total {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.pay-tag {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.rider-select,
+.status-select {
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #1e293b;
+  background-color: white;
+  outline: none;
+}
+
+.rider-select:focus,
+.status-select:focus {
+  border-color: #0284c7;
+}
+
+/* Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.badge-preparing {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.badge-shipping {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.badge-delivered {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.badge-cancelled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.delivery-loading,
+.delivery-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}

@@ -1,0 +1,338 @@
+/* =========================================
+   ไฟล์: front_end/src/pages/ProcurementPage.css
+   สไตล์หน้าจอจัดซื้อวัตถุดิบ (Material Procurement)
+   ========================================= */
+
+.procure-page-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 40px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+}
+
+.procure-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.procure-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.procure-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.btn-add-procure {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #0d9488;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.25);
+}
+
+.btn-add-procure:hover {
+  background-color: #0f766e;
+  transform: translateY(-1px);
+}
+
+/* KPI Overview Grid */
+.procure-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.procure-kpi-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.kpi-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.kpi-spend .kpi-icon-wrap {
+  background-color: #ccfbf1;
+  color: #0f766e;
+}
+
+.kpi-count .kpi-icon-wrap {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.kpi-avg .kpi-icon-wrap {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.kpi-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.kpi-number {
+  margin: 4px 0 2px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.kpi-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Filter Bar */
+.procure-filter-bar {
+  background-color: white;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-group-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.filter-select,
+.filter-date-input {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1e293b;
+  background-color: white;
+  outline: none;
+}
+
+.btn-filter-apply {
+  background-color: #0d9488;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-filter-reset {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Table Card */
+.procure-table-card {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.procure-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.procure-table th,
+.procure-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.procure-table th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  color: #475569;
+}
+
+.procure-table tbody tr:hover {
+  background-color: #fcfcfc;
+}
+
+.inv-badge {
+  background-color: #f1f5f9;
+  color: #334155;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ing-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.supplier-tag {
+  color: #475569;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.exp-date {
+  color: #ea580c;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Modal */
+.procure-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.procure-modal-box {
+  background-color: white;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+}
+
+.procure-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.procure-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.procure-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.total-cost-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.total-cost-preview span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f766e;
+}
+
+.total-cost-preview strong {
+  font-size: 18px;
+  color: #0f766e;
+}
+
+.procure-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.btn-save-procure {
+  background-color: #0d9488;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-save-procure:hover {
+  background-color: #0f766e;
+}
+
+.procure-loading,
+.procure-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
