@@ -358,4 +358,208 @@ router.get('/export', async (req, res) => {
   }
 });
 
+// ------------------------------------------------------------------------------
+// 5. GET /api/reports/today-items
+// คำอธิบาย: สรุปรายการสินค้าที่ขายออกไปในวันนี้ (หรือวันที่เลือก)
+// เพื่อให้ผู้บริหาร/เจ้าของร้านตรวจสอบได้ทันทีว่า "วันนี้ขายอะไรไปบ้าง แต่ละเมนูกี่แก้ว ยอดเท่าไร"
+// ------------------------------------------------------------------------------
+router.get('/today-items', async (req, res) => {
+  try {
+    const { date } = req.query; // YYYY-MM-DD (ถ้าไม่ส่งมาจะใช้ CURRENT_DATE อัตโนมัติ)
+    let whereClause = 'WHERE DATE(o.order_time) = CURRENT_DATE';
+    const params = [];
+
+    if (date) {
+      whereClause = 'WHERE DATE(o.order_time) = $1::date';
+      params.push(date);
+    }
+
+    const query = `
+      SELECT 
+        p.product_id,
+        p.product_name,
+        COALESCE(c.category_name, 'ทั่วไป') AS category_name,
+        SUM(oi.quantity)::int AS total_qty,
+        SUM(oi.quantity * oi.price)::numeric(12,2) AS total_revenue,
+        ROUND(AVG(oi.price), 2) AS avg_unit_price,
+        COUNT(DISTINCT oi.order_id)::int AS order_count
+      FROM order_items oi
+      JOIN orders o ON oi.order_id = o.order_id
+      JOIN products p ON oi.product_id = p.product_id
+      LEFT JOIN categories c ON p.category_id = c.category_id
+      ${whereClause}
+      GROUP BY p.product_id, p.product_name, c.category_name
+      ORDER BY total_qty DESC, total_revenue DESC
+    `;
+
+    const result = await pool.query(query, params);
+
+    // คำนวณสรุปยอดรวมของสินค้าที่ขายออกไป
+    const totalQtySold = result.rows.reduce((sum, item) => sum + parseInt(item.total_qty || 0), 0);
+    const totalSalesAmount = result.rows.reduce((sum, item) => sum + parseFloat(item.total_revenue || 0), 0);
+    const uniqueItemsCount = result.rows.length;
+
+    res.status(200).json({
+      targetDate: date || new Date().toISOString().slice(0, 10),
+      summary: {
+        totalQtySold,
+        totalSalesAmount,
+        uniqueItemsCount
+      },
+      items: result.rows
+    });
+  } catch (error) {
+    console.error('Error fetching today items:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงรายงานสินค้าที่ขายได้วันนี้' });
+  }
+});
+
+// ------------------------------------------------------------------------------
+// 6. GET /api/reports/orders
+// คำอธิบาย: ดึงประวัติรายการคำสั่งซื้อ (Orders History) พร้อมรายละเอียดครบถ้วน
+// - วัน-เวลาที่ขายออกอย่างละเอียด (Formatted Date & Time)
+// - แคชเชียร์ผู้ทำรายการ
+// - วิธีชำระเงิน, เงินที่รับ, เงินทอน, ประเภทออเดอร์ (Dine-in / Takeaway / Delivery)
+// - รายการสินค้าในแต่ละบิล (Embedded items array) สำหรับเปิดดูรายการสั่งซื้อในแต่ละบิล
+// ------------------------------------------------------------------------------
+router.get('/orders', async (req, res) => {
+  try {
+    const { range = 'today', startDate, endDate, search, limit = 100 } = req.query;
+    const { condition: rawCondition, params, nextIdx } = buildDateCondition(range, startDate, endDate, 1);
+    
+    let whereClause = rawCondition ? rawCondition.replace(/order_time/g, 'o.order_time') : '';
+    let currentIdx = nextIdx;
+
+    if (search && search.trim() !== '') {
+      const searchParam = `%${search.trim()}%`;
+      const searchCond = `(
+        o.order_id::text ILIKE ${currentIdx} OR 
+        (e.first_name || ' ' || e.last_name) ILIKE ${currentIdx} OR 
+        o.payment_method ILIKE ${currentIdx} OR
+        d.customer_name ILIKE ${currentIdx}
+      )`;
+      whereClause = whereClause ? `${whereClause} AND ${searchCond}` : `WHERE ${searchCond}`;
+      params.push(searchParam);
+      currentIdx++;
+    }
+
+    const query = `
+      SELECT 
+        o.order_id,
+        o.order_time,
+        TO_CHAR(o.order_time, 'YYYY-MM-DD HH24:MI:SS') AS formatted_order_time,
+        TO_CHAR(o.order_time, 'DD/MM/YYYY') AS sale_date_th,
+        TO_CHAR(o.order_time, 'HH24:MI:SS') AS sale_time_th,
+        o.total_amount,
+        o.amount_received,
+        o.change_amount,
+        o.order_type,
+        o.payment_method,
+        o.delivery_fee,
+        o.employee_id,
+        COALESCE(e.first_name || ' ' || e.last_name, 'ไม่ระบุ') AS cashier_name,
+        d.customer_name,
+        d.customer_phone,
+        d.delivery_address,
+        d.delivery_status,
+        d.notes AS delivery_notes,
+        COALESCE(r.first_name || ' ' || r.last_name, '-') AS rider_name,
+        COALESCE(
+          (
+            SELECT json_agg(json_build_object(
+              'product_id', oi.product_id,
+              'product_name', p.product_name,
+              'category_name', COALESCE(c.category_name, 'ทั่วไป'),
+              'quantity', oi.quantity,
+              'price', oi.price,
+              'subtotal', (oi.quantity * oi.price)
+            ))
+            FROM order_items oi
+            JOIN products p ON oi.product_id = p.product_id
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE oi.order_id = o.order_id
+          ),
+          '[]'::json
+        ) AS items
+      FROM orders o
+      LEFT JOIN employee e ON o.employee_id = e.employee_id
+      LEFT JOIN deliveries d ON o.order_id = d.order_id
+      LEFT JOIN employee r ON d.rider_id = r.employee_id
+      ${whereClause}
+      ORDER BY o.order_time DESC
+      LIMIT ${currentIdx}
+    `;
+    params.push(parseInt(limit) || 100);
+
+    const result = await pool.query(query, params);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching orders report:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงรายการคำสั่งซื้อ' });
+  }
+});
+
+// ------------------------------------------------------------------------------
+// 7. GET /api/reports/orders/:id
+// คำอธิบาย: ดึงรายละเอียดบิลคำสั่งซื้อเดี่ยวแบบเจาะจง (Single Order Receipt / Detail)
+// ------------------------------------------------------------------------------
+router.get('/orders/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = `
+      SELECT 
+        o.order_id,
+        o.order_time,
+        TO_CHAR(o.order_time, 'YYYY-MM-DD HH24:MI:SS') AS formatted_order_time,
+        TO_CHAR(o.order_time, 'DD/MM/YYYY') AS sale_date_th,
+        TO_CHAR(o.order_time, 'HH24:MI:SS') AS sale_time_th,
+        o.total_amount,
+        o.amount_received,
+        o.change_amount,
+        o.order_type,
+        o.payment_method,
+        o.delivery_fee,
+        o.employee_id,
+        COALESCE(e.first_name || ' ' || e.last_name, 'ไม่ระบุ') AS cashier_name,
+        d.customer_name,
+        d.customer_phone,
+        d.delivery_address,
+        d.delivery_status,
+        d.notes AS delivery_notes,
+        COALESCE(r.first_name || ' ' || r.last_name, '-') AS rider_name,
+        COALESCE(
+          (
+            SELECT json_agg(json_build_object(
+              'product_id', oi.product_id,
+              'product_name', p.product_name,
+              'category_name', COALESCE(c.category_name, 'ทั่วไป'),
+              'quantity', oi.quantity,
+              'price', oi.price,
+              'subtotal', (oi.quantity * oi.price)
+            ))
+            FROM order_items oi
+            JOIN products p ON oi.product_id = p.product_id
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE oi.order_id = o.order_id
+          ),
+          '[]'::json
+        ) AS items
+      FROM orders o
+      LEFT JOIN employee e ON o.employee_id = e.employee_id
+      LEFT JOIN deliveries d ON o.order_id = d.order_id
+      LEFT JOIN employee r ON d.rider_id = r.employee_id
+      WHERE o.order_id = $1
+    `;
+    const result = await pool.query(query, [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบบิลคำสั่งซื้อนี้' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching order by id:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลบิล' });
+  }
+});
+
 module.exports = router;
+
