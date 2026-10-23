@@ -46,6 +46,8 @@ router.get('/', async (req, res) => {
         e.phone AS rider_phone,
         o.total_amount,
         o.payment_method,
+        COALESCE(o.payment_status, 'PAID') AS payment_status,
+        COALESCE(o.order_status, 'COMPLETED') AS order_status,
         o.order_time
       FROM deliveries d
       JOIN orders o ON d.order_id = o.order_id
@@ -133,6 +135,8 @@ router.get('/my-tasks/:riderId', async (req, res) => {
         d.delivered_at,
         o.total_amount,
         o.payment_method,
+        COALESCE(o.payment_status, 'PAID') AS payment_status,
+        COALESCE(o.order_status, 'COMPLETED') AS order_status,
         -- รวมรายการสินค้าของบิลนั้นเป็น JSON Array แนบไปกับแต่ละงาน
         (
           SELECT json_agg(json_build_object(
@@ -194,9 +198,45 @@ router.put('/:id/status', async (req, res) => {
       return res.status(404).json({ message: 'ไม่พบรายการจัดส่งนี้' });
     }
 
+    const deliveryRow = result.rows[0];
+
+    // เมื่อไรเดอร์จัดส่งสำเร็จและได้รับเงินแล้ว (DELIVERED):
+    // ให้อัปเดตข้อมูลหัวบิลในตาราง orders ทันที:
+    // - payment_status = 'PAID' (เปลี่ยนจาก PENDING เป็นชำระเงินแล้ว)
+    // - order_status = 'COMPLETED' (สถานะบิลเสร็จสมบูรณ์)
+    // - amount_received = total_amount (ได้รับเงินครบตามยอดสุทธิ)
+    // - order_time = CURRENT_TIMESTAMP (บันทึกเวลาที่ได้รับเงินจริง เพื่อให้รายงานรายวันนำไปนับยอดขายในวันที่ได้รับเงินจริง)
+    if (status === 'DELIVERED') {
+      const finalPaymentMethod = req.body.final_payment_method;
+      let paymentMethodSql = '';
+      const updateParams = [deliveryRow.order_id];
+
+      if (finalPaymentMethod) {
+        paymentMethodSql = ', payment_method = $2';
+        updateParams.push(finalPaymentMethod);
+      }
+
+      await pool.query(`
+        UPDATE orders 
+        SET payment_status = 'PAID',
+            order_status = 'COMPLETED',
+            amount_received = total_amount,
+            order_time = CURRENT_TIMESTAMP
+            ${paymentMethodSql}
+        WHERE order_id = $1
+      `, updateParams);
+    } else if (status === 'CANCELLED') {
+      await pool.query(`
+        UPDATE orders 
+        SET payment_status = 'CANCELLED',
+            order_status = 'CANCELLED'
+        WHERE order_id = $1
+      `, [deliveryRow.order_id]);
+    }
+
     res.status(200).json({ 
       message: 'อัปเดตสถานะการจัดส่งสำเร็จ',
-      delivery: result.rows[0]
+      delivery: deliveryRow
     });
   } catch (error) {
     console.error('Error updating delivery status:', error);

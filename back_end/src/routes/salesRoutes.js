@@ -47,7 +47,19 @@ router.post('/', async (req, res) => {
     // --------------------------------------------------------------------------
     await pool.query('BEGIN');
 
-    // 1. บันทึกข้อมูลหัวบิลลงตาราง orders
+    // ตรวจสอบเงื่อนไขการชำระเงินของ Delivery:
+    // หากเป็น Delivery และเลือก "เก็บเงินปลายทาง":
+    // - payment_status จะเป็น 'PENDING' (รอชำระเงินปลายทาง)
+    // - order_status จะเป็น 'PENDING_DELIVERY' (รอไรเดอร์ไปส่งและเก็บเงิน)
+    // - amount_received และ change_amount จะเป็น 0 (เพราะยังไม่ได้รับเงินที่หน้าร้าน)
+    // - ยอดขายนี้จะยังไม่ถูกนำไปนับในรายงานยอดขาย จนกว่าไรเดอร์จะกดยืนยันว่าส่งสำเร็จและได้รับเงินแล้ว
+    const isCodDelivery = (order_type === 'delivery' && payment_method === 'เก็บเงินปลายทาง');
+    const initialPaymentStatus = isCodDelivery ? 'PENDING' : 'PAID';
+    const initialOrderStatus = (order_type === 'delivery') ? 'PENDING_DELIVERY' : 'COMPLETED';
+    const finalAmountReceived = isCodDelivery ? 0 : (amount_received || total_amount);
+    const finalChangeAmount = isCodDelivery ? 0 : (change_amount || 0);
+
+    // 1. บันทึกข้อมูลหัวบิลลงตาราง orders พร้อมสถานะการชำระเงิน
     const orderResult = await pool.query(
       `INSERT INTO orders (
         total_amount, 
@@ -56,18 +68,22 @@ router.post('/', async (req, res) => {
         amount_received, 
         change_amount, 
         order_type, 
-        delivery_fee
+        delivery_fee,
+        payment_status,
+        order_status
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7) 
-      RETURNING order_id`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      RETURNING order_id, order_time, payment_status, order_status`,
       [
         total_amount, 
         employee_id || null, 
         payment_method, 
-        amount_received || total_amount, 
-        change_amount || 0,
+        finalAmountReceived, 
+        finalChangeAmount,
         order_type || 'takeaway',
-        delivery_fee || 0
+        delivery_fee || 0,
+        initialPaymentStatus,
+        initialOrderStatus
       ] 
     );
     const newOrderId = orderResult.rows[0].order_id;
@@ -163,9 +179,11 @@ router.post('/', async (req, res) => {
 
     // ส่ง Order ID และเวลาบันทึกกลับไปให้หน้าบ้านทำใบเสร็จ
     res.status(201).json({ 
-      message: 'ชำระเงินสำเร็จ!', 
+      message: isCodDelivery ? 'บันทึกคำสั่งซื้อจัดส่งสำเร็จ (รอชำระเงินปลายทาง)' : 'ชำระเงินสำเร็จ!', 
       order_id: newOrderId,
-      created_at: orderDate
+      created_at: orderDate,
+      payment_status: initialPaymentStatus,
+      order_status: initialOrderStatus
     });
 
   } catch (error) {
