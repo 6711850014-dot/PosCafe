@@ -562,3 +562,57 @@
   font-weight: 600;
   font-size: 11px;
 }
+
+
+/* -----------------------------------------------------------------------------
+   กล่องข้อมูลสำหรับตัวเลือก "เก็บเงินปลายทาง (COD)"
+   ----------------------------------------------------------------------------- */
+.cod-info-card {
+  padding: 14px 16px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #166534;
+}
+
+.cod-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #15803d;
+}
+
+.cod-info-card p {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #166534;
+  line-height: 1.4;
+}
+
+.cod-amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #dcfce7;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.cod-total-highlight {
+  color: #e11d48;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cod-note-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.3;
+}

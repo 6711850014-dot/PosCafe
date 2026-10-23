@@ -145,22 +145,24 @@ export default function RiderDeliveryPage() {
   // - มี Modal ยืนยัน พร้อมเตือนจำนวนเงินสดที่ต้องเก็บจากลูกค้า (COD)
   // ----------------------------------------------------------------------------
   const handleCompleteDelivery = (task) => {
-    const isCash = task.payment_method === 'เงินสด';
+    const isCod = task.payment_method === 'เก็บเงินปลายทาง' || task.payment_method === 'เงินสด';
     Swal.fire({
-      title: 'ยืนยันการส่งสินค้า?',
+      title: 'ยืนยันการจัดส่งและรับเงิน?',
       html: `
         <div style="text-align: left; font-size: 14px;">
           <p><strong>ลูกค้า:</strong> ${task.customer_name}</p>
-          <p><strong>ยอดเงินที่ต้องเก็บ:</strong> <span style="color: ${isCash ? '#e74c3c' : '#27ae60'}; font-weight: bold;">
-            ${isCash ? `฿${Number(task.total_amount).toLocaleString()} (เงินสด COD)` : 'ชำระเงินแล้ว'}
+          <p><strong>ช่องทางชำระเงิน:</strong> <span style="font-weight: bold; color: #0284c7;">${task.payment_method}</span></p>
+          <p><strong>ยอดเงินที่ต้องเก็บ:</strong> <span style="color: ${isCod ? '#e74c3c' : '#27ae60'}; font-weight: bold; font-size: 16px;">
+            ${isCod ? `฿${Number(task.total_amount).toLocaleString()} (เก็บเงินปลายทาง - เงินสดหรือโอน)` : 'ชำระเงินเรียบร้อยแล้ว'}
           </span></p>
+          ${isCod ? '<p style="color: #64748b; font-size: 12px; margin-top: 8px;">* เมื่อกดยืนยัน ระบบจะบันทึกยอดเงินเข้าเป็นยอดขายของร้านค้าทันที</p>' : ''}
         </div>
       `,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#10b981',
       cancelButtonColor: '#94a3b8',
-      confirmButtonText: '✅ ส่งสำเร็จแล้ว',
+      confirmButtonText: '✅ ส่งสำเร็จและได้รับเงินแล้ว',
       cancelButtonText: 'ยังไม่เสร็จ'
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -173,9 +175,9 @@ export default function RiderDeliveryPage() {
           if (response.ok) {
             Swal.fire({
               icon: 'success',
-              title: 'บันทึกส่งสำเร็จ!',
-              text: isCash ? 'อย่าลืมนำเงินสดกลับมาเคลียร์ที่ร้านนะครับ' : 'ส่งของเรียบร้อย',
-              timer: 2000,
+              title: 'บันทึกส่งสำเร็จและได้รับเงินแล้ว!',
+              text: isCod ? 'บันทึกยอดขายเข้าระบบเรียบร้อยแล้ว อย่าลืมนำเงินสด/สลิปมาเคลียร์ที่ร้านนะครับ' : 'ส่งของเรียบร้อย',
+              timer: 2500,
               showConfirmButton: false
             });
             fetchRiderTasks(selectedRiderId); // รีเฟรชรายการงาน
@@ -255,7 +257,7 @@ export default function RiderDeliveryPage() {
           </div>
         ) : (
           activeTasks.map((task) => {
-            const isCash = task.payment_method === 'เงินสด';
+            const isCod = task.payment_method === 'เก็บเงินปลายทาง' || task.payment_method === 'เงินสด';
             const items = task.items || [];
 
             return (
@@ -318,15 +320,15 @@ export default function RiderDeliveryPage() {
                 </div>
 
                 {/* แถบแจ้งเตือนการชำระเงิน (COD vs ชำระแล้ว) */}
-                <div className={`payment-notice ${isCash ? 'notice-cod' : 'notice-paid'}`}>
+                <div className={`payment-notice ${isCod ? 'notice-cod' : 'notice-paid'}`}>
                   <div className="payment-notice-left">
                     <FaMoneyBillWave />
                     <div>
                       <span className="notice-title">
-                        {isCash ? 'เก็บเงินสดปลายทาง (COD)' : 'ชำระเงินเรียบร้อยแล้ว'}
+                        {isCod ? 'เก็บเงินปลายทาง' : 'ชำระเงินเรียบร้อยแล้ว'}
                       </span>
                       <span className="notice-sub">
-                        {isCash ? 'ต้องเก็บเงินสดจากลูกค้า' : 'ไม่ต้องเก็บเงินเพิ่ม'}
+                        {isCod ? 'เรียกเก็บเงินจากลูกค้า (เงินสดหรือสแกนโอน)' : 'ลูกค้าชำระเงินแล้ว ไม่ต้องเก็บเงินเพิ่ม'}
                       </span>
                     </div>
                   </div>

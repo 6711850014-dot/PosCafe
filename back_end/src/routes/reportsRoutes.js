@@ -19,25 +19,30 @@ const pool = require('../../db');
 // รองรับ: 'today' (วันนี้), '7days' (7 วันล่าสุด), '30days' (30 วันล่าสุด), 
 //        'custom' (ระบุวันเริ่มต้น-สิ้นสุดเอง), หรือ 'all' (ทั้งหมด)
 // ------------------------------------------------------------------------------
-function buildDateCondition(range, startDate, endDate, paramStartIndex = 1) {
+function buildDateCondition(range, startDate, endDate, paramStartIndex = 1, paidOnly = true) {
   const params = [];
-  let condition = '';
+  const clauses = [];
   let idx = paramStartIndex;
 
-  if (range === 'today') {
-    condition = `WHERE order_time >= CURRENT_DATE`;
-  } else if (range === '7days') {
-    condition = `WHERE order_time >= CURRENT_DATE - INTERVAL '7 days'`;
-  } else if (range === '30days') {
-    condition = `WHERE order_time >= CURRENT_DATE - INTERVAL '30 days'`;
-  } else if (range === 'custom' && startDate && endDate) {
-    condition = `WHERE order_time >= $${idx}::date AND order_time < ($${idx + 1}::date + INTERVAL '1 day')`;
-    params.push(startDate, endDate);
-    idx += 2;
-  } else {
-    condition = '';
+  // สำหรับการคิดยอดขาย รายได้ และสถิติ จะนับเฉพาะบิลที่ชำระเงินแล้วเท่านั้น (PAID)
+  // บิลเดลิเวอรี่ที่เลือกเก็บเงินปลายทาง (PENDING) จะยังไม่ถูกนำมาคิดยอดขายจนกว่าไรเดอร์จะยืนยันรับเงิน
+  if (paidOnly) {
+    clauses.push("COALESCE(payment_status, 'PAID') = 'PAID'");
   }
 
+  if (range === 'today') {
+    clauses.push("order_time >= CURRENT_DATE");
+  } else if (range === '7days') {
+    clauses.push("order_time >= CURRENT_DATE - INTERVAL '7 days'");
+  } else if (range === '30days') {
+    clauses.push("order_time >= CURRENT_DATE - INTERVAL '30 days'");
+  } else if (range === 'custom' && startDate && endDate) {
+    clauses.push(`order_time >= ${idx}::date AND order_time < (${idx + 1}::date + INTERVAL '1 day')`);
+    params.push(startDate, endDate);
+    idx += 2;
+  }
+
+  const condition = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : '';
   return { condition, params, nextIdx: idx };
 }
 
@@ -90,7 +95,7 @@ router.get('/summary', async (req, res) => {
     let oiCondition = '';
     if (condition) {
       orderItemJoin = 'JOIN orders o ON oi.order_id = o.order_id';
-      oiCondition = condition.replace(/order_time/g, 'o.order_time');
+      oiCondition = condition.replace(/order_time/g, 'o.order_time').replace(/payment_status/g, 'o.payment_status');
     }
 
     const topProductsQuery = `
@@ -149,7 +154,7 @@ router.get('/summary', async (req, res) => {
         COALESCE(SUM(o.total_amount), 0) AS total_sales
       FROM orders o
       LEFT JOIN employee e ON o.employee_id = e.employee_id
-      ${condition}
+      ${condition ? condition.replace(/order_time/g, 'o.order_time').replace(/payment_status/g, 'o.payment_status') : ''}
       GROUP BY e.employee_id, e.first_name, e.last_name
       ORDER BY total_sales DESC
     `;
@@ -366,11 +371,11 @@ router.get('/export', async (req, res) => {
 router.get('/today-items', async (req, res) => {
   try {
     const { date } = req.query; // YYYY-MM-DD (ถ้าไม่ส่งมาจะใช้ CURRENT_DATE อัตโนมัติ)
-    let whereClause = 'WHERE DATE(o.order_time) = CURRENT_DATE';
+    let whereClause = "WHERE DATE(o.order_time) = CURRENT_DATE AND COALESCE(o.payment_status, 'PAID') = 'PAID'";
     const params = [];
 
     if (date) {
-      whereClause = 'WHERE DATE(o.order_time) = $1::date';
+      whereClause = "WHERE DATE(o.order_time) = $1::date AND COALESCE(o.payment_status, 'PAID') = 'PAID'";
       params.push(date);
     }
 
@@ -425,7 +430,8 @@ router.get('/today-items', async (req, res) => {
 router.get('/orders', async (req, res) => {
   try {
     const { range = 'today', startDate, endDate, search, limit = 100 } = req.query;
-    const { condition: rawCondition, params, nextIdx } = buildDateCondition(range, startDate, endDate, 1);
+    // สำหรับหน้าประวัติบิล ให้แสดงทุกบิล (รวมทั้งบิลที่รอเก็บเงินปลายทาง เพื่อให้แคชเชียร์ตรวจสอบได้)
+    const { condition: rawCondition, params, nextIdx } = buildDateCondition(range, startDate, endDate, 1, false);
     
     let whereClause = rawCondition ? rawCondition.replace(/order_time/g, 'o.order_time') : '';
     let currentIdx = nextIdx;
@@ -447,6 +453,8 @@ router.get('/orders', async (req, res) => {
       SELECT 
         o.order_id,
         o.order_time,
+        COALESCE(o.payment_status, 'PAID') AS payment_status,
+        COALESCE(o.order_status, 'COMPLETED') AS order_status,
         TO_CHAR(o.order_time, 'YYYY-MM-DD HH24:MI:SS') AS formatted_order_time,
         TO_CHAR(o.order_time, 'DD/MM/YYYY') AS sale_date_th,
         TO_CHAR(o.order_time, 'HH24:MI:SS') AS sale_time_th,
@@ -510,6 +518,8 @@ router.get('/orders/:id', async (req, res) => {
       SELECT 
         o.order_id,
         o.order_time,
+        COALESCE(o.payment_status, 'PAID') AS payment_status,
+        COALESCE(o.order_status, 'COMPLETED') AS order_status,
         TO_CHAR(o.order_time, 'YYYY-MM-DD HH24:MI:SS') AS formatted_order_time,
         TO_CHAR(o.order_time, 'DD/MM/YYYY') AS sale_date_th,
         TO_CHAR(o.order_time, 'HH24:MI:SS') AS sale_time_th,

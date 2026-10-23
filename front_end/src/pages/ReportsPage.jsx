@@ -804,14 +804,15 @@ export default function ReportsPage() {
                 <table className="report-table orders-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "90px" }}>เลขที่บิล</th>
+                      <th style={{ width: "85px" }}>เลขที่บิล</th>
                       <th>วัน-เวลา ที่ขายออก</th>
                       <th>ประเภทออเดอร์</th>
                       <th>วิธีชำระเงิน</th>
+                      <th>สถานะการชำระ</th>
                       <th>พนักงานแคชเชียร์</th>
                       <th style={{ textAlign: "center" }}>จำนวนรายการ</th>
                       <th style={{ textAlign: "right" }}>ยอดรวมสุทธิ</th>
-                      <th style={{ textAlign: "center", width: "140px" }}>การกระทำ</th>
+                      <th style={{ textAlign: "center", width: "135px" }}>การกระทำ</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -848,6 +849,11 @@ export default function ReportsPage() {
                           <td>
                             <span className="payment-badge">
                               {order.payment_method || "เงินสด"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`payment-status-badge status-${order.payment_status?.toLowerCase() || 'paid'}`}>
+                              {order.payment_status === 'PENDING' ? '⏳ รอชำระปลายทาง' : order.payment_status === 'CANCELLED' ? '❌ ยกเลิก' : '✅ ชำระแล้ว'}
                             </span>
                           </td>
                           <td>
@@ -1071,6 +1077,12 @@ export default function ReportsPage() {
               <div className="receipt-meta-item">
                 <span className="meta-label">วิธีชำระเงิน:</span>
                 <span className="meta-val">{selectedOrderModal.payment_method || 'เงินสด'}</span>
+              </div>
+              <div className="receipt-meta-item col-span-2">
+                <span className="meta-label">สถานะการชำระเงิน:</span>
+                <span className={`payment-status-badge status-${selectedOrderModal.payment_status?.toLowerCase() || 'paid'}`} style={{ display: 'inline-block', width: 'fit-content' }}>
+                  {selectedOrderModal.payment_status === 'PENDING' ? '⏳ รอชำระเงินปลายทาง (ยังไม่คิดยอดขายจนกว่าไรเดอร์จะส่งและรับเงิน)' : selectedOrderModal.payment_status === 'CANCELLED' ? '❌ ยกเลิกคำสั่งซื้อ' : '✅ ชำระเงินเรียบร้อยแล้ว'}
+                </span>
               </div>
             </div>
 

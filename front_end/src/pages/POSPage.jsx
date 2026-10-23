@@ -191,13 +191,20 @@ function POSPage() {
       }
     }
 
-    setPaymentMethod('เงินสด');
+    if (orderType === 'delivery') {
+      setPaymentMethod('เก็บเงินปลายทาง');
+    } else {
+      setPaymentMethod('เงินสด');
+    }
     setAmountReceived(total); // ค่าเริ่มต้นรับเงินพอดี
     setShowPaymentModal(true);
   };
 
   // ฟังก์ชันยืนยันการชำระเงินเข้า Database
   const confirmPayment = async () => {
+    const isCod = (orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง');
+
+    // ถ้าเป็นเงินสดหน้าร้าน ต้องเช็คว่ากรอกเงินรับมาครบถ้วน
     if (paymentMethod === 'เงินสด') {
       const received = parseInt(amountReceived);
       if (!amountReceived || isNaN(received) || received <= 0) {
@@ -223,13 +230,17 @@ function POSPage() {
     }
 
     try {
-      Swal.fire({ title: 'กำลังประมวลผล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      Swal.fire({ 
+        title: isCod ? 'กำลังยืนยันคำสั่งซื้อรายการ...' : 'กำลังประมวลผล...', 
+        allowOutsideClick: false, 
+        didOpen: () => Swal.showLoading() 
+      });
 
       // ------------------------------------------------------------------------
       // ยิง API บันทึกการขาย (POST /api/sales):
       // - ส่งตะกร้าสินค้า cart พร้อมราคาที่คำนวณส่วนลด % รายเมนูแล้ว
       // - ส่งประเภทออเดอร์ (order_type): 'takeaway' หรือ 'delivery'
-      // - หากเป็น 'delivery' จะแนบ delivery_fee และ delivery_info สำหรับสร้างงานให้ไรเดอร์
+      // - กรณี 'เก็บเงินปลายทาง': ระบบจะบันทึกสถานะเป็น PENDING_PAYMENT (ยังไม่บันทึกยอดขายจริงจนกว่าไรเดอร์ส่งและรับเงิน)
       // ------------------------------------------------------------------------
       const response = await fetch('/api/sales', {
         method: 'POST',
@@ -239,8 +250,8 @@ function POSPage() {
           total_amount: finalTotal, 
           employee_id: currentEmployeeId,
           payment_method: paymentMethod,
-          amount_received: paymentMethod === 'เงินสด' ? parseInt(amountReceived) : finalTotal,
-          change_amount: changeAmount,
+          amount_received: isCod ? 0 : (paymentMethod === 'เงินสด' ? parseInt(amountReceived) : finalTotal),
+          change_amount: isCod ? 0 : changeAmount,
           order_type: orderType,
           delivery_fee: currentDeliveryFee,
           delivery_info: orderType === 'delivery' ? deliveryInfo : null
@@ -251,10 +262,21 @@ function POSPage() {
       if (response.ok) {
         Swal.close();
         setShowPaymentModal(false);
+
+        if (isCod) {
+          Swal.fire({
+            icon: 'success',
+            title: 'ยืนยันคำสั่งซื้อสำเร็จ!',
+            text: 'ส่งงานไปยังหน้าจอไรเดอร์แล้ว (ระบบจะบันทึกยอดขายจริงเมื่อไรเดอร์จัดส่งและเก็บเงินแล้ว)',
+            timer: 2500,
+            showConfirmButton: false
+          });
+        }
+
         // เตรียมข้อมูลใบเสร็จ
         setCompletedOrder({
           order_id: data.order_id,
-          date: new Date(data.created_at).toLocaleString('th-TH'),
+          date: new Date(data.created_at || Date.now()).toLocaleString('th-TH'),
           items: [...cart],
           itemsSubtotal: itemsSubtotal,
           deliveryFee: currentDeliveryFee,
@@ -262,8 +284,9 @@ function POSPage() {
           deliveryInfo: orderType === 'delivery' ? { ...deliveryInfo } : null,
           total: finalTotal,
           payment_method: paymentMethod,
-          amount_received: paymentMethod === 'เงินสด' ? parseInt(amountReceived) : finalTotal,
-          change_amount: changeAmount,
+          payment_status: data.payment_status || (isCod ? 'PENDING' : 'PAID'),
+          amount_received: isCod ? 0 : (paymentMethod === 'เงินสด' ? parseInt(amountReceived) : finalTotal),
+          change_amount: isCod ? 0 : changeAmount,
           cashier: currentEmployeeName
         });
         setCart([]); 
@@ -292,14 +315,20 @@ function POSPage() {
               <button 
                 type="button"
                 className={`order-type-btn ${orderType === 'takeaway' ? 'active' : ''}`}
-                onClick={() => setOrderType('takeaway')}
+                onClick={() => {
+                  setOrderType('takeaway');
+                  if (paymentMethod === 'เก็บเงินปลายทาง') setPaymentMethod('เงินสด');
+                }}
               >
                 <FaStore /> หน้าร้าน / กลับบ้าน
               </button>
               <button 
                 type="button"
                 className={`order-type-btn btn-delivery-type ${orderType === 'delivery' ? 'active' : ''}`}
-                onClick={() => setOrderType('delivery')}
+                onClick={() => {
+                  setOrderType('delivery');
+                  setPaymentMethod('เก็บเงินปลายทาง');
+                }}
               >
                 <FaMotorcycle /> จัดส่งเดลิเวอรี่ (Delivery)
               </button>
@@ -493,7 +522,7 @@ function POSPage() {
           </div>
 
           <button className="btn-checkout" onClick={handleOpenPayment} disabled={cart.length === 0}>
-            {orderType === 'delivery' ? 'ยืนยันออเดอร์จัดส่ง' : 'ชำระเงิน'} ฿{total.toLocaleString()}
+            {orderType === 'delivery' ? 'ยืนยันคำสั่งซื้อรายการ' : 'ชำระเงิน'} ฿{total.toLocaleString()}
           </button>
           <button className="btn-clear" onClick={clearCart} disabled={cart.length === 0}>ยกเลิกออเดอร์</button>
         </div>
@@ -502,15 +531,48 @@ function POSPage() {
       {/* Modal การชำระเงิน */}
       {showPaymentModal && (
         <div className="prod-modal-overlay no-print">
-          <div className="prod-modal-box" style={{ maxWidth: '420px' }}>
+          <div className="prod-modal-box" style={{ maxWidth: '440px' }}>
             <div className="prod-modal-header">
-              <h3>เลือกช่องทางการชำระเงิน</h3>
+              <h3>{orderType === 'delivery' ? 'ยืนยันคำสั่งซื้อเดลิเวอรี่' : 'เลือกช่องทางการชำระเงิน'}</h3>
               <button className="prod-close-btn" onClick={() => setShowPaymentModal(false)}><FaTimes /></button>
             </div>
             
             <div className="payment-methods">
-              <button className={`pay-btn ${paymentMethod === 'เงินสด' ? 'active' : ''}`} onClick={() => setPaymentMethod('เงินสด')}><FaMoneyBillWave /> เงินสด</button>
-              <button className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} onClick={() => setPaymentMethod('โอนเงิน')}><FaQrcode /> โอนเงิน (QR)</button>
+              {orderType === 'delivery' ? (
+                <>
+                  <button 
+                    type="button"
+                    className={`pay-btn ${paymentMethod === 'เก็บเงินปลายทาง' ? 'active' : ''}`} 
+                    onClick={() => setPaymentMethod('เก็บเงินปลายทาง')}
+                  >
+                    <FaMotorcycle /> เก็บเงินปลายทาง
+                  </button>
+                  <button 
+                    type="button"
+                    className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} 
+                    onClick={() => setPaymentMethod('โอนเงิน')}
+                  >
+                    <FaQrcode /> โอนเงิน (QR)
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    type="button"
+                    className={`pay-btn ${paymentMethod === 'เงินสด' ? 'active' : ''}`} 
+                    onClick={() => setPaymentMethod('เงินสด')}
+                  >
+                    <FaMoneyBillWave /> เงินสด
+                  </button>
+                  <button 
+                    type="button"
+                    className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} 
+                    onClick={() => setPaymentMethod('โอนเงิน')}
+                  >
+                    <FaQrcode /> โอนเงิน (QR)
+                  </button>
+                </>
+              )}
             </div>
 
             <div style={{ padding: '15px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '20px' }}>
@@ -522,11 +584,27 @@ function POSPage() {
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>
-                <span>ยอดที่ต้องชำระ:</span>
+                <span>{orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' ? 'ยอดที่ต้องเก็บปลายทาง:' : 'ยอดที่ต้องชำระ:'}</span>
                 <span style={{ color: '#e74c3c' }}>฿{total.toLocaleString()}</span>
               </div>
 
-              {paymentMethod === 'เงินสด' ? (
+              {orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' ? (
+                <div className="cod-info-card">
+                  <div className="cod-icon-title">
+                    <FaMotorcycle /> <strong>เก็บเงินปลายทาง</strong>
+                  </div>
+                  <p>
+                    ลูกค้าจะชำระเงินกับไรเดอร์ที่ปลายทาง (รองรับทั้งเงินสดและสแกนโอน)
+                  </p>
+                  <div className="cod-amount-row">
+                    <span>ยอดเรียกเก็บปลายทาง:</span>
+                    <span className="cod-total-highlight">฿{total.toLocaleString()}</span>
+                  </div>
+                  <small className="cod-note-text">
+                    * รายการนี้จะยังไม่ถูกบันทึกเป็นยอดขายจริง จนกว่าไรเดอร์จะไปส่งถึงและกดยืนยันรับเงินแล้ว
+                  </small>
+                </div>
+              ) : paymentMethod === 'เงินสด' ? (
                 <div>
                   <label style={{ display: 'block', marginBottom: '5px' }}>รับเงินมา (บาท)</label>
                   <input type="number" className="prod-form-group-input" value={amountReceived} onChange={(e) => setAmountReceived(e.target.value)} />
@@ -543,8 +621,14 @@ function POSPage() {
               )}
             </div>
 
-            <button className="btn-checkout" style={{ width: '100%', fontSize: '18px', padding: '15px' }} onClick={confirmPayment}>
-              ยืนยันการรับเงิน
+            <button 
+              className="btn-checkout" 
+              style={{ width: '100%', fontSize: '17px', padding: '14px' }} 
+              onClick={confirmPayment}
+            >
+              {orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' 
+                ? 'ยืนยันคำสั่งซื้อรายการ' 
+                : 'ยืนยันการรับเงิน'}
             </button>
           </div>
         </div>
@@ -594,9 +678,21 @@ function POSPage() {
               </div>
 
               <div className="receipt-item receipt-total"><span>ยอดรวมทั้งสิ้น</span><span>฿{completedOrder.total.toLocaleString()}</span></div>
-              <div className="receipt-item" style={{ marginTop: '10px' }}><span>ชำระโดย</span><span>{completedOrder.payment_method}</span></div>
-              <div className="receipt-item"><span>รับเงิน</span><span>฿{completedOrder.amount_received.toLocaleString()}</span></div>
-              <div className="receipt-item"><span>เงินทอน</span><span>฿{completedOrder.change_amount.toLocaleString()}</span></div>
+              <div className="receipt-item" style={{ marginTop: '10px' }}>
+                <span>ชำระโดย</span>
+                <span>{completedOrder.payment_method}</span>
+              </div>
+              {completedOrder.payment_method === 'เก็บเงินปลายทาง' ? (
+                <div className="receipt-item" style={{ color: '#b45309', fontWeight: 'bold' }}>
+                  <span>สถานะ</span>
+                  <span>รอชำระเงินปลายทาง</span>
+                </div>
+              ) : (
+                <>
+                  <div className="receipt-item"><span>รับเงิน</span><span>฿{completedOrder.amount_received.toLocaleString()}</span></div>
+                  <div className="receipt-item"><span>เงินทอน</span><span>฿{completedOrder.change_amount.toLocaleString()}</span></div>
+                </>
+              )}
 
               <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '12px' }}>
                 <p>ขอบคุณที่ใช้บริการครับ/ค่ะ</p>
