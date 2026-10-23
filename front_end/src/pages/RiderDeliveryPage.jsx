@@ -146,47 +146,110 @@ export default function RiderDeliveryPage() {
   // ----------------------------------------------------------------------------
   const handleCompleteDelivery = (task) => {
     const isCod = task.payment_method === 'เก็บเงินปลายทาง' || task.payment_method === 'เงินสด';
-    Swal.fire({
-      title: 'ยืนยันการจัดส่งและรับเงิน?',
-      html: `
-        <div style="text-align: left; font-size: 14px;">
-          <p><strong>ลูกค้า:</strong> ${task.customer_name}</p>
-          <p><strong>ช่องทางชำระเงิน:</strong> <span style="font-weight: bold; color: #0284c7;">${task.payment_method}</span></p>
-          <p><strong>ยอดเงินที่ต้องเก็บ:</strong> <span style="color: ${isCod ? '#e74c3c' : '#27ae60'}; font-weight: bold; font-size: 16px;">
-            ${isCod ? `฿${Number(task.total_amount).toLocaleString()} (เก็บเงินปลายทาง - เงินสดหรือโอน)` : 'ชำระเงินเรียบร้อยแล้ว'}
-          </span></p>
-          ${isCod ? '<p style="color: #64748b; font-size: 12px; margin-top: 8px;">* เมื่อกดยืนยัน ระบบจะบันทึกยอดเงินเข้าเป็นยอดขายของร้านค้าทันที</p>' : ''}
-        </div>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      cancelButtonColor: '#94a3b8',
-      confirmButtonText: '✅ ส่งสำเร็จและได้รับเงินแล้ว',
-      cancelButtonText: 'ยังไม่เสร็จ'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${API_BASE}/api/deliveries/${task.delivery_id}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'DELIVERED' })
-          });
-          if (response.ok) {
-            Swal.fire({
-              icon: 'success',
-              title: 'บันทึกส่งสำเร็จและได้รับเงินแล้ว!',
-              text: isCod ? 'บันทึกยอดขายเข้าระบบเรียบร้อยแล้ว อย่าลืมนำเงินสด/สลิปมาเคลียร์ที่ร้านนะครับ' : 'ส่งของเรียบร้อย',
-              timer: 2500,
-              showConfirmButton: false
-            });
-            fetchRiderTasks(selectedRiderId); // รีเฟรชรายการงาน
-          }
-        } catch (error) {
-          Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกสำเร็จได้', 'error');
+
+    if (isCod) {
+      // กรณีเก็บเงินปลายทาง: ให้ไรเดอร์เลือกว่าลูกค้าจ่ายจริงเป็น "เงินสด" หรือ "เงินโอน"
+      Swal.fire({
+        title: '🛵 ยืนยันการจัดส่ง & รับเงินปลายทาง',
+        html: `
+          <div style="text-align: left; font-size: 14px;">
+            <p style="margin: 0 0 6px 0;"><strong>ลูกค้า:</strong> ${task.customer_name} (${task.customer_phone})</p>
+            <p style="margin: 0 0 14px 0;"><strong>ยอดเงินที่ต้องเรียกเก็บ:</strong> <span style="color: #e11d48; font-size: 20px; font-weight: bold;">฿${Number(task.total_amount).toLocaleString()}</span></p>
+            
+            <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #0f172a;">
+              👉 ไรเดอร์โปรดระบุ: ลูกค้าชำระเงินจริงด้วยวิธีใด?
+            </label>
+            <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+              <label style="flex: 1; border: 2px solid #0284c7; background: #f0f9ff; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 700; color: #0369a1;">
+                <input type="radio" name="rider_payment_method" value="เงินสด" checked style="margin-right: 6px; transform: scale(1.2);" />
+                💵 ลูกค้าจ่าย เงินสด
+              </label>
+              <label style="flex: 1; border: 2px solid #10b981; background: #f0fdf4; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 700; color: #047857;">
+                <input type="radio" name="rider_payment_method" value="โอนเงิน" style="margin-right: 6px; transform: scale(1.2);" />
+                📱 ลูกค้า สแกนโอน
+              </label>
+            </div>
+            <p style="color: #64748b; font-size: 12px; margin: 0; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+              * เมื่อกดยืนยัน ระบบจะบันทึกยอดเงินเข้าสู่ฐานข้อมูลหลัก และบันทึกเป็นยอดขายจริงของร้านทันที
+            </p>
+          </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: '✅ ยืนยันรับเงินและปิดบิล',
+        cancelButtonText: 'ยังไม่เสร็จ',
+        preConfirm: () => {
+          const selected = document.querySelector('input[name="rider_payment_method"]:checked');
+          return selected ? selected.value : 'เงินสด';
         }
-      }
-    });
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const chosenMethod = result.value;
+          try {
+            const response = await fetch(`${API_BASE}/api/deliveries/${task.delivery_id}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                status: 'DELIVERED',
+                final_payment_method: chosenMethod
+              })
+            });
+            if (response.ok) {
+              Swal.fire({
+                icon: 'success',
+                title: 'ส่งสำเร็จและบันทึกยอดแล้ว!',
+                html: `ลูกค้าชำระด้วย: <strong style="color: #0284c7;">${chosenMethod}</strong><br/>ระบบได้บันทึกยอดขาย <strong>฿${Number(task.total_amount).toLocaleString()}</strong> เข้าสู่ฐานข้อมูลหลักเรียบร้อยแล้ว`,
+                timer: 2800,
+                showConfirmButton: false
+              });
+              fetchRiderTasks(selectedRiderId);
+            }
+          } catch (error) {
+            Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกสำเร็จได้', 'error');
+          }
+        }
+      });
+    } else {
+      // กรณีลูกค้าชำระเงินโอนล่วงหน้าแล้ว
+      Swal.fire({
+        title: 'ยืนยันการจัดส่งสำเร็จ?',
+        html: `
+          <div style="text-align: left; font-size: 14px;">
+            <p><strong>ลูกค้า:</strong> ${task.customer_name}</p>
+            <p><strong>สถานะการเงิน:</strong> <span style="color: #10b981; font-weight: bold;">ชำระเงินล่วงหน้าแล้ว (ไม่ต้องเก็บเงินเพิ่ม)</span></p>
+          </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: '✅ ส่งสำเร็จแล้ว',
+        cancelButtonText: 'ยกเลิก'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`${API_BASE}/api/deliveries/${task.delivery_id}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: 'DELIVERED' })
+            });
+            if (response.ok) {
+              Swal.fire({
+                icon: 'success',
+                title: 'ส่งสินค้าเรียบร้อย!',
+                timer: 1800,
+                showConfirmButton: false
+              });
+              fetchRiderTasks(selectedRiderId);
+            }
+          } catch (error) {
+            Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกสถานะได้', 'error');
+          }
+        }
+      });
+    }
   };
 
   // แยกงานที่ยังทำไม่เสร็จ (active) กับงานที่ส่งสำเร็จแล้ว (finished)

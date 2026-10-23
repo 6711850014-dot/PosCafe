@@ -207,14 +207,24 @@ router.put('/:id/status', async (req, res) => {
     // - amount_received = total_amount (ได้รับเงินครบตามยอดสุทธิ)
     // - order_time = CURRENT_TIMESTAMP (บันทึกเวลาที่ได้รับเงินจริง เพื่อให้รายงานรายวันนำไปนับยอดขายในวันที่ได้รับเงินจริง)
     if (status === 'DELIVERED') {
+      const finalPaymentMethod = req.body.final_payment_method;
+      let paymentMethodSql = '';
+      const updateParams = [deliveryRow.order_id];
+
+      if (finalPaymentMethod) {
+        paymentMethodSql = ', payment_method = $2';
+        updateParams.push(finalPaymentMethod);
+      }
+
       await pool.query(`
         UPDATE orders 
         SET payment_status = 'PAID',
             order_status = 'COMPLETED',
             amount_received = total_amount,
             order_time = CURRENT_TIMESTAMP
+            ${paymentMethodSql}
         WHERE order_id = $1
-      `, [deliveryRow.order_id]);
+      `, updateParams);
     } else if (status === 'CANCELLED') {
       await pool.query(`
         UPDATE orders 

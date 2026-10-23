@@ -528,22 +528,48 @@ function POSPage() {
         </div>
       </div>
 
-      {/* Modal การชำระเงิน */}
+      {/* Modal การยืนยันคำสั่งซื้อ / ชำระเงิน */}
       {showPaymentModal && (
         <div className="prod-modal-overlay no-print">
-          <div className="prod-modal-box" style={{ maxWidth: '440px' }}>
-            <div className="prod-modal-header">
-              <h3>{orderType === 'delivery' ? 'ยืนยันคำสั่งซื้อเดลิเวอรี่' : 'เลือกช่องทางการชำระเงิน'}</h3>
-              <button className="prod-close-btn" onClick={() => setShowPaymentModal(false)}><FaTimes /></button>
-            </div>
-            
-            <div className="payment-methods">
-              {orderType === 'delivery' ? (
-                <>
+          {orderType === 'delivery' ? (
+            /* ================= MODAL ยืนยันคำสั่งซื้อเดลิเวอรี่ (ส่งงานให้ไรเดอร์) ================= */
+            <div className="prod-modal-box" style={{ maxWidth: '480px' }}>
+              <div className="prod-modal-header" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#e0f2fe', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                    <FaMotorcycle />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '18px', color: '#0f172a' }}>ยืนยันคำสั่งซื้อเดลิเวอรี่</h3>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>ตรวจสอบข้อมูลก่อนส่งงานให้ไรเดอร์จัดส่ง</span>
+                  </div>
+                </div>
+                <button className="prod-close-btn" onClick={() => setShowPaymentModal(false)}><FaTimes /></button>
+              </div>
+
+              {/* ข้อมูลการจัดส่ง */}
+              <div style={{ padding: '14px', background: '#f8fafc', borderRadius: '10px', margin: '15px 0', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e293b', marginBottom: '8px' }}>
+                  🛵 ข้อมูลผู้รับสินค้า
+                </div>
+                <div style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
+                  <div><strong>ลูกค้า:</strong> {deliveryInfo.customer_name} ({deliveryInfo.customer_phone})</div>
+                  <div><strong>ที่อยู่จัดส่ง:</strong> {deliveryInfo.delivery_address}</div>
+                  {deliveryInfo.notes && <div><strong>หมายเหตุ:</strong> {deliveryInfo.notes}</div>}
+                </div>
+              </div>
+
+              {/* เลือกวิธีชำระเงิน */}
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>
+                  รูปแบบการชำระเงิน:
+                </label>
+                <div className="payment-methods" style={{ marginBottom: '10px' }}>
                   <button 
                     type="button"
                     className={`pay-btn ${paymentMethod === 'เก็บเงินปลายทาง' ? 'active' : ''}`} 
                     onClick={() => setPaymentMethod('เก็บเงินปลายทาง')}
+                    style={{ flex: 1, padding: '12px', fontSize: '14px' }}
                   >
                     <FaMotorcycle /> เก็บเงินปลายทาง
                   </button>
@@ -551,86 +577,104 @@ function POSPage() {
                     type="button"
                     className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} 
                     onClick={() => setPaymentMethod('โอนเงิน')}
+                    style={{ flex: 1, padding: '12px', fontSize: '14px' }}
                   >
                     <FaQrcode /> โอนเงิน (QR)
                   </button>
-                </>
-              ) : (
-                <>
-                  <button 
-                    type="button"
-                    className={`pay-btn ${paymentMethod === 'เงินสด' ? 'active' : ''}`} 
-                    onClick={() => setPaymentMethod('เงินสด')}
-                  >
-                    <FaMoneyBillWave /> เงินสด
-                  </button>
-                  <button 
-                    type="button"
-                    className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} 
-                    onClick={() => setPaymentMethod('โอนเงิน')}
-                  >
-                    <FaQrcode /> โอนเงิน (QR)
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div style={{ padding: '15px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '20px' }}>
-              {orderType === 'delivery' && (
-                <div style={{ fontSize: '13px', color: '#0284c7', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px dashed #cbd5e1' }}>
-                  <strong>🛵 จัดส่งให้:</strong> {deliveryInfo.customer_name} ({deliveryInfo.customer_phone})<br/>
-                  <strong>ที่อยู่:</strong> {deliveryInfo.delivery_address}
                 </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>
-                <span>{orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' ? 'ยอดที่ต้องเก็บปลายทาง:' : 'ยอดที่ต้องชำระ:'}</span>
-                <span style={{ color: '#e74c3c' }}>฿{total.toLocaleString()}</span>
               </div>
 
-              {orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' ? (
-                <div className="cod-info-card">
+              {/* กล่องสรุปตามวิธีชำระ */}
+              {paymentMethod === 'เก็บเงินปลายทาง' ? (
+                <div className="cod-info-card" style={{ marginBottom: '18px' }}>
                   <div className="cod-icon-title">
-                    <FaMotorcycle /> <strong>เก็บเงินปลายทาง</strong>
+                    <FaMotorcycle /> <strong>เก็บเงินปลายทาง (COD)</strong>
                   </div>
-                  <p>
-                    ลูกค้าจะชำระเงินกับไรเดอร์ที่ปลายทาง (รองรับทั้งเงินสดและสแกนโอน)
+                  <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#166534' }}>
+                    ไรเดอร์จะเป็นผู้เรียกเก็บเงิน (เงินสด หรือ สแกนโอน) เมื่อไปส่งถึงลูกค้า
                   </p>
                   <div className="cod-amount-row">
-                    <span>ยอดเรียกเก็บปลายทาง:</span>
+                    <span>ยอดที่ไรเดอร์ต้องเก็บ:</span>
                     <span className="cod-total-highlight">฿{total.toLocaleString()}</span>
                   </div>
-                  <small className="cod-note-text">
-                    * รายการนี้จะยังไม่ถูกบันทึกเป็นยอดขายจริง จนกว่าไรเดอร์จะไปส่งถึงและกดยืนยันรับเงินแล้ว
+                  <small className="cod-note-text" style={{ color: '#047857' }}>
+                    * ระบบจะยังไม่บันทึกยอดขายจริง จนกว่าไรเดอร์จะไปส่งถึงและกดยืนยันยอดเงิน (เงินสด/โอน)
                   </small>
                 </div>
-              ) : paymentMethod === 'เงินสด' ? (
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px' }}>รับเงินมา (บาท)</label>
-                  <input type="number" className="prod-form-group-input" value={amountReceived} onChange={(e) => setAmountReceived(e.target.value)} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '15px', color: changeAmount > 0 ? '#2ecc71' : '#555' }}>
-                    <span>เงินทอน:</span>
-                    <span style={{ fontWeight: 'bold' }}>฿{changeAmount.toLocaleString()}</span>
+              ) : (
+                <div style={{ padding: '14px', background: '#f8fafc', borderRadius: '10px', marginBottom: '18px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>
+                    <span>ยอดชำระล่วงหน้า:</span>
+                    <span style={{ color: '#e74c3c' }}>฿{total.toLocaleString()}</span>
+                  </div>
+                  <div className="qr-container" style={{ padding: '10px', background: 'white', borderRadius: '8px' }}>
+                    <img src="https://promptpay.io/0812345678.png" alt="QR Code" style={{ width: '130px', height: '130px' }} />
+                    <p style={{ marginTop: '8px', fontSize: '13px', color: '#555' }}>ลูกค้าสแกนโอนเข้าบัญชีร้าน ฿{total.toLocaleString()}</p>
                   </div>
                 </div>
-              ) : (
-                <div className="qr-container">
-                  <img src="https://promptpay.io/0812345678.png" alt="QR Code" style={{ width: '150px', height: '150px' }} />
-                  <p style={{ marginTop: '10px', color: '#555' }}>สแกนเพื่อจ่าย ฿{total.toLocaleString()}</p>
-                </div>
               )}
-            </div>
 
-            <button 
-              className="btn-checkout" 
-              style={{ width: '100%', fontSize: '17px', padding: '14px' }} 
-              onClick={confirmPayment}
-            >
-              {orderType === 'delivery' && paymentMethod === 'เก็บเงินปลายทาง' 
-                ? 'ยืนยันคำสั่งซื้อรายการ' 
-                : 'ยืนยันการรับเงิน'}
-            </button>
-          </div>
+              {/* ปุ่มยืนยันคำสั่งซื้อเดลิเวอรี่ */}
+              <button 
+                className="btn-checkout" 
+                style={{ width: '100%', fontSize: '17px', padding: '14px', background: '#0284c7' }} 
+                onClick={confirmPayment}
+              >
+                {paymentMethod === 'เก็บเงินปลายทาง' 
+                  ? '🚀 ยืนยันคำสั่งซื้อ (ส่งงานให้ไรเดอร์)' 
+                  : '✅ ยืนยันการรับเงินโอน (ส่งงานให้ไรเดอร์)'}
+              </button>
+            </div>
+          ) : (
+            /* ================= MODAL ชำระเงินหน้าร้าน / กลับบ้าน (Takeaway) ================= */
+            <div className="prod-modal-box" style={{ maxWidth: '420px' }}>
+              <div className="prod-modal-header">
+                <h3>เลือกช่องทางการชำระเงิน</h3>
+                <button className="prod-close-btn" onClick={() => setShowPaymentModal(false)}><FaTimes /></button>
+              </div>
+              
+              <div className="payment-methods">
+                <button className={`pay-btn ${paymentMethod === 'เงินสด' ? 'active' : ''}`} onClick={() => setPaymentMethod('เงินสด')}>
+                  <FaMoneyBillWave /> เงินสด
+                </button>
+                <button className={`pay-btn ${paymentMethod === 'โอนเงิน' ? 'active' : ''}`} onClick={() => setPaymentMethod('โอนเงิน')}>
+                  <FaQrcode /> โอนเงิน (QR)
+                </button>
+              </div>
+
+              <div style={{ padding: '15px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>
+                  <span>ยอดที่ต้องชำระ:</span>
+                  <span style={{ color: '#e74c3c' }}>฿{total.toLocaleString()}</span>
+                </div>
+
+                {paymentMethod === 'เงินสด' ? (
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>รับเงินมา (บาท)</label>
+                    <input 
+                      type="number" 
+                      className="prod-form-group-input" 
+                      value={amountReceived} 
+                      onChange={(e) => setAmountReceived(e.target.value)} 
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '15px', color: changeAmount > 0 ? '#2ecc71' : '#555' }}>
+                      <span>เงินทอน:</span>
+                      <span style={{ fontWeight: 'bold' }}>฿{changeAmount.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="qr-container">
+                    <img src="https://promptpay.io/0812345678.png" alt="QR Code" style={{ width: '150px', height: '150px' }} />
+                    <p style={{ marginTop: '10px', color: '#555' }}>สแกนเพื่อจ่าย ฿{total.toLocaleString()}</p>
+                  </div>
+                )}
+              </div>
+
+              <button className="btn-checkout" style={{ width: '100%', fontSize: '18px', padding: '15px' }} onClick={confirmPayment}>
+                ยืนยันการรับเงิน
+              </button>
+            </div>
+          )}
         </div>
       )}
 
