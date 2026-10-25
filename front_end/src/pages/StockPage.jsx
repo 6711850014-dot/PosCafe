@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-//import './ProductsPage.css'; 
 import './StockPage.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaBoxOpen, FaPlusCircle, FaList,FaExclamationTriangle } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaPlusCircle, FaList, FaExclamationTriangle } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function StockPage() {
@@ -10,12 +9,12 @@ function StockPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // State สำหรับระบบรับของเข้าและดูล็อต
   const [showReceiveModal, setShowReceiveModal] = useState(false);
   const [showLotsModal, setShowLotsModal] = useState(false);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-  const [receiveData, setReceiveData] = useState({ quantity: '', purchase_date: '', expiration_date: '' });
+  const [receiveData, setReceiveData] = useState({ quantity: '', purchase_date: '', expiration_date: '', procurement_id: '' });
   const [lotsData, setLotsData] = useState([]);
+  const [pendingPOs, setPendingPOs] = useState([]); // เก็บรายการบิลที่รอรับเข้า
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; 
@@ -47,20 +46,16 @@ function StockPage() {
     if (!dateString) return '-';
     const date = new Date(dateString);
     return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-
-    
   };
 
-  // ฟังก์ชันเช็คว่าวันที่นี้ หมดอายุหรือยัง? (เทียบกับวันนี้)
   const isExpired = (dateString) => {
     if (!dateString) return false;
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // รีเซ็ตเวลาเป็นเที่ยงคืนเพื่อเทียบแค่วันที่
+    today.setHours(0, 0, 0, 0);
     const expDate = new Date(dateString);
     return expDate < today;
   };
 
-  //  ฟังก์ชันจัดการข้อมูลหลัก (เพิ่ม/แก้ไข/ลบ)
   const handleAddClick = () => {
     setIsEditing(false);
     setFormData({ ingredient_id: generateNextId(), ingredient_name: '', total_quantity: '', unit: '', min_quantity: '', expiration_date: '' });
@@ -104,15 +99,19 @@ function StockPage() {
     });
   };
 
-  //  ฟังก์ชันรับของเข้า (Stock In)
-  const handleReceiveClick = (item) => {
+  const handleReceiveClick = async (item) => {
     setSelectedIngredient(item);
     
-    //  ดึงวันที่แบบบังคับให้ตรงกับเครื่องคอมพิวเตอร์ปัจจุบัน (ปี-เดือน-วัน)
     const d = new Date();
     const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     
-    setReceiveData({ quantity: '', purchase_date: today, expiration_date: '' });
+    setReceiveData({ quantity: '', purchase_date: today, expiration_date: '', procurement_id: '' });
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/procurements/pending/${item.ingredient_id}`);
+      if (response.ok) setPendingPOs(await response.json());
+    } catch (error) { console.error('Error fetching pending POs'); }
+
     setShowReceiveModal(true);
   };
 
@@ -126,12 +125,11 @@ function StockPage() {
       if (response.ok) {
         Swal.fire({ icon: 'success', title: 'รับของเข้าสต็อกสำเร็จ!', showConfirmButton: false, timer: 1500 });
         setShowReceiveModal(false);
-        fetchStock(); // โหลดข้อมูลยอดรวมใหม่
+        fetchStock();
       }
     } catch (error) { Swal.fire('ผิดพลาด', 'บันทึกข้อมูลไม่ได้', 'error'); }
   };
 
-  //  ฟังก์ชันดูล็อตสินค้า
   const handleViewLotsClick = async (item) => {
     setSelectedIngredient(item);
     try {
@@ -143,7 +141,6 @@ function StockPage() {
     } catch (error) { console.error('Error fetching lots'); }
   };
 
-  //  ฟังก์ชันเคลียร์ล็อตสินค้าที่หมดอายุ
   const handleClearLot = (inventoryId) => {
     Swal.fire({
       title: 'เคลียร์สต็อกล็อตนี้?',
@@ -156,11 +153,8 @@ function StockPage() {
       if (res.isConfirmed) {
         const response = await fetch(`http://localhost:5000/api/stock/lot/${inventoryId}`, { method: 'DELETE' });
         if (response.ok) {
-          // รีเฟรชข้อมูลในหน้าต่างล็อต
           const lotsRes = await fetch(`http://localhost:5000/api/stock/${selectedIngredient.ingredient_id}/lots`);
           if (lotsRes.ok) setLotsData(await lotsRes.json());
-          
-          // รีเฟรชยอดรวมในตารางหลัก
           fetchStock();
           Swal.fire('เคลียร์แล้ว!', 'ตัดสต็อกล็อตนี้ออกจากระบบเรียบร้อย', 'success');
         }
@@ -218,7 +212,6 @@ function StockPage() {
                     <td style={{ fontWeight: 'bold' }}>{item.ingredient_id}</td>
                     <td style={{ color: '#2c3e50', fontWeight: 'bold' }}>
                       {item.ingredient_name}
-                      {/*  ถ้า Backend บอกว่ามีของหมดอายุ ให้โชว์ป้ายเตือนสีแดง! */}
                       {item.has_expired_lot && (
                         <div style={{ fontSize: '12px', color: '#e74c3c', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <FaExclamationTriangle /> มีล็อตที่หมดอายุ!
@@ -233,11 +226,8 @@ function StockPage() {
                     <td><span className={`prod-badge ${status.className}`}>{status.label}</span></td>
                     <td>
                       <div className="prod-action-buttons">
-                        {/*  ปุ่มใหม่: รับของเข้า (สีเขียว) และ ดูล็อต (สีฟ้า) */}
                         <button className="prod-btn-stcok-in" onClick={() => handleReceiveClick(item)} title="รับของเข้าสต็อก"><FaPlusCircle /></button>
                         <button className="prod-btn-detail" onClick={() => handleViewLotsClick(item)} title="ดูรายละเอียดล็อตสินค้า"><FaList /></button>
-                        
-                        {/* ปุ่มแก้ไขข้อมูลหลัก และ ลบ */}
                         <button className="prod-btn-edit" onClick={() => handleEditClick(item)} title="แก้ไขข้อมูลวัตถุดิบ"><FaEdit /></button>
                         <button className="prod-btn-delete" onClick={() => handleDelete(item.ingredient_id, item.ingredient_name)} title="ลบข้อมูล"><FaTrash /></button>
                       </div>
@@ -248,23 +238,21 @@ function StockPage() {
             ) : ( <tr><td colSpan="7" className="prod-no-data">ไม่พบข้อมูลสต็อก</td></tr> )}
           </tbody>
         </table>
-        {/* ปุ่มเลื่อนหน้า (Pagination) */}
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="prod-pagination">
-                    <span className="pagination-info">แสดงหน้าที่ {currentPage} จาก {totalPages}</span>
-                    <div className="prod-page-btns">
-                      <button className="p-btn" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}><FaChevronLeft /></button>
-                      {[...Array(totalPages)].map((_, idx) => (
-                        <button key={idx + 1} className={`p-btn ${currentPage === idx + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(idx + 1)}>{idx + 1}</button>
-                      ))}
-                      <button className="p-btn" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}><FaChevronRight /></button>
-                    </div>
-                  </div>
-                )}
+        
+        {totalPages > 1 && (
+          <div className="prod-pagination">
+            <span className="pagination-info">แสดงหน้าที่ {currentPage} จาก {totalPages}</span>
+            <div className="prod-page-btns">
+              <button className="p-btn" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}><FaChevronLeft /></button>
+              {[...Array(totalPages)].map((_, idx) => (
+                <button key={idx + 1} className={`p-btn ${currentPage === idx + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(idx + 1)}>{idx + 1}</button>
+              ))}
+              <button className="p-btn" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}><FaChevronRight /></button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/*  1. Modal เพิ่ม/แก้ไข ข้อมูลหลัก (ของเดิม) */}
       {showModal && (
         <div className="prod-modal-overlay">
           <div className="prod-modal-box">
@@ -297,15 +285,12 @@ function StockPage() {
                 <label>จุดแจ้งเตือนของใกล้หมด (Min Quantity)</label>
                 <input type="number" step="1" name="min_quantity" value={formData.min_quantity} onChange={handleInputChange} required />
               </div>
-
-              {/* เพิ่มกล่องกรอกวันหมดอายุตรงนี้ (ให้แสดงเฉพาะตอน "เพิ่มใหม่" เท่านั้น) */}
               {!isEditing && (
                 <div className="prod-form-group" style={{ marginBottom: '25px' }}>
                   <label>วันหมดอายุของล็อตแรก (ถ้ามี)</label>
                   <input type="date" name="expiration_date" value={formData.expiration_date} onChange={handleInputChange} />
                 </div>
               )}
-
               <div className="prod-modal-footer">
                 <button type="button" onClick={() => setShowModal(false)} className="prod-btn-cancel">ยกเลิก</button>
                 <button type="submit" className="prod-btn-confirm">บันทึกข้อมูล</button>
@@ -315,7 +300,6 @@ function StockPage() {
         </div>
       )}
 
-      {/*  2. Modal รับของเข้า (Stock In) */}
       {showReceiveModal && (
         <div className="prod-modal-overlay">
           <div className="prod-modal-box" style={{ maxWidth: '400px' }}>
@@ -324,6 +308,17 @@ function StockPage() {
               <button className="prod-close-btn" onClick={() => setShowReceiveModal(false)}><FaTimes /></button>
             </div>
             <form onSubmit={submitReceiveStock}>
+              <div className="prod-form-group" style={{ marginBottom: '15px' }}>
+                <label>อ้างอิงบิลจัดซื้อ (เพื่อเปลี่ยนสถานะอัตโนมัติ)</label>
+                <select name="procurement_id" value={receiveData.procurement_id} onChange={handleReceiveChange}>
+                  <option value="">-- ไม่ระบุ (รับเข้าอิสระ / เพิ่มเอง) --</option>
+                  {pendingPOs.map(po => (
+                    <option key={po.procurement_id} value={po.procurement_id}>
+                      อิงจากบิล: {po.supplier_name} (สั่งมา {po.quantity} / วันที่ {po.p_date})
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="prod-form-group" style={{ marginBottom: '15px' }}>
                 <label>จำนวนที่รับเข้า ({selectedIngredient?.unit})</label>
                 <input type="number" step="1" name="quantity" value={receiveData.quantity} onChange={handleReceiveChange} required />
@@ -345,7 +340,6 @@ function StockPage() {
         </div>
       )}
 
-      {/*  3. Modal ดูรายละเอียดล็อตสินค้า */}
       {showLotsModal && (
         <div className="prod-modal-overlay">
           <div className="prod-modal-box" style={{ maxWidth: '600px' }}>
@@ -361,15 +355,15 @@ function StockPage() {
                     <th>วันที่ซื้อ</th>
                     <th>วันหมดอายุ</th>
                     <th>จำนวนคงเหลือ</th>
-                    <th style={{ textAlign: 'center' }}>จัดการ</th> {/*  เพิ่มหัวคอลัมน์ */}
+                    <th style={{ textAlign: 'center' }}>จัดการ</th>
                   </tr>
                 </thead>
                 <tbody>
                   {lotsData.length > 0 ? (
                     lotsData.map(lot => {
-                      const expired = isExpired(lot.expiration_date); // เช็คว่าล็อตนี้หมดอายุไหม
+                      const expired = isExpired(lot.expiration_date);
                       return (
-                        <tr key={lot.inventory_id} style={{ backgroundColor: expired ? '#fee2e2' : 'transparent' }}> {/* ถ้าหมดอายุ พื้นหลังเป็นสีแดงอ่อน */}
+                        <tr key={lot.inventory_id} style={{ backgroundColor: expired ? '#fee2e2' : 'transparent' }}> 
                           <td style={{ color: expired ? '#dc2626' : 'inherit' }}>Lot-{lot.inventory_id}</td>
                           <td style={{ color: expired ? '#dc2626' : 'inherit' }}>{formatDate(lot.purchase_date)}</td>
                           <td style={{ color: expired ? '#dc2626' : (lot.expiration_date ? '#e74c3c' : '#adb5bd'), fontWeight: 'bold' }}>

@@ -22,7 +22,7 @@ import {
   FaExternalLinkAlt 
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
+
 
 export default function DeliveryPage() {
   // ----------------------------------------------------------------------------
@@ -156,10 +156,7 @@ export default function DeliveryPage() {
         </div>
 
         <div className="delivery-header-actions">
-          {/* ลิงก์สำหรับเปิดหน้าจอมือถือไรเดอร์ในแท็บใหม่ เพื่อทดสอบหรือแสดง QR Code */}
-          <Link to="/rider-delivery" target="_blank" className="btn-open-mobile-rider">
-            <FaMobileAlt /> เปิดหน้าจอมือถือไรเดอร์ (Rider View) <FaExternalLinkAlt style={{ fontSize: '11px' }} />
-          </Link>
+        
           <button className="btn-delivery-refresh" onClick={fetchDeliveries}>
             <FaSyncAlt /> รีเฟรช
           </button>
@@ -172,7 +169,7 @@ export default function DeliveryPage() {
           { id: 'ALL', label: 'ทั้งหมด' },
           { id: 'PENDING', label: 'รอดำเนินการ' },
           { id: 'PREPARING', label: 'กำลังเตรียม' },
-          { id: 'OUT_FOR_DELIVERY', label: 'กำลังจัดส่ง 🛵' },
+          { id: 'OUT_FOR_DELIVERY', label: 'กำลังจัดส่ง' },
           { id: 'DELIVERED', label: 'ส่งสำเร็จ' },
         ].map((tab) => (
           <button

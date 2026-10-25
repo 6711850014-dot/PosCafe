@@ -53,7 +53,7 @@ function LoginPage() {
           if (data.user.role === 'Admin') {
             window.location.replace('/pos');
           } else {
-            window.location.replace('/pos');
+            window.location.replace('/');
           }
         });
 

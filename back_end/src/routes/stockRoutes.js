@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
         i.min_quantity,
         COALESCE(SUM(inv.quantity), 0) AS total_quantity,
         MAX(inv.purchase_date) AS last_update_date,
-        -- เช็คว่า มีล็อตที่วันหมดอายุน้อยกว่าวันนี้ ค้างอยู่ไหม?
         EXISTS (
           SELECT 1 FROM inventory sub_inv 
           WHERE sub_inv.ingredient_id = i.ingredient_id 
@@ -33,7 +32,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 2. เพิ่มวัตถุดิบใหม่ (ป้องกันชื่อซ้ำ + ไม่สนตัวเล็กตัวใหญ่ + รองรับวันหมดอายุล็อตแรก)
+// 2. เพิ่มวัตถุดิบใหม่
 router.post('/', async (req, res) => {
   const { ingredient_id, ingredient_name, unit, min_quantity, total_quantity, expiration_date } = req.body;
   try {
@@ -47,14 +46,11 @@ router.post('/', async (req, res) => {
     }
 
     await pool.query('BEGIN'); 
-
-    // บันทึกข้อมูลหลัก
     await pool.query(
       'INSERT INTO ingredients (ingredient_id, ingredient_name, unit, min_quantity) VALUES ($1, $2, $3, $4)',
       [ingredient_id, ingredient_name, unit, min_quantity]
     );
 
-    // ถ้ายอดที่กรอกมามากกว่า 0 ให้บันทึกลง inventory ด้วย
     if (total_quantity > 0) {
       await pool.query(
         'INSERT INTO inventory (ingredient_id, quantity, purchase_date, expiration_date) VALUES ($1, $2, (CURRENT_TIMESTAMP AT TIME ZONE \'Asia/Bangkok\')::DATE, $3)',
@@ -93,8 +89,8 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('BEGIN');
-    await pool.query('DELETE FROM inventory WHERE ingredient_id=$1', [id]); // ลบสต็อกก่อน
-    await pool.query('DELETE FROM ingredients WHERE ingredient_id=$1', [id]); // ลบข้อมูลหลัก
+    await pool.query('DELETE FROM inventory WHERE ingredient_id=$1', [id]);
+    await pool.query('DELETE FROM ingredients WHERE ingredient_id=$1', [id]);
     await pool.query('COMMIT');
     res.status(200).json({ message: 'Deleted successfully' });
   } catch (error) {
@@ -104,11 +100,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// =========================
-//  ส่วนของระบบ Lot Tracking 
-// =========================
-
-// 5. ดึงข้อมูลล็อตสินค้าทั้งหมดของวัตถุดิบนั้นๆ (View Lots)
+// 5. ดึงข้อมูลล็อตสินค้าทั้งหมด
 router.get('/:id/lots', async (req, res) => {
   try {
     const result = await pool.query(
@@ -125,23 +117,37 @@ router.get('/:id/lots', async (req, res) => {
   }
 });
 
-// 6. รับของเข้าสต็อก (Stock In)
+// 6. รับของเข้าสต็อก (Stock In) - พร้อมอัปเดตสถานะบิลจัดซื้อ
 router.post('/:id/receive', async (req, res) => {
   const { id } = req.params;
-  const { quantity, purchase_date, expiration_date } = req.body;
+  const { quantity, purchase_date, expiration_date, procurement_id } = req.body;
   try {
-    await pool.query(
-      'INSERT INTO inventory (ingredient_id, quantity, purchase_date, expiration_date) VALUES ($1, $2, $3, $4)',
+    await pool.query('BEGIN');
+    
+    const invRes = await pool.query(
+      'INSERT INTO inventory (ingredient_id, quantity, purchase_date, expiration_date) VALUES ($1, $2, $3, $4) RETURNING inventory_id',
       [id, quantity, purchase_date, expiration_date || null] 
     );
+    const newInvId = invRes.rows[0].inventory_id;
+
+    // อัปเดตสถานะบิลจัดซื้อเมื่อมีรหัสอ้างอิงส่งมา
+    if (procurement_id) {
+      await pool.query(
+        'UPDATE material_procurement SET status = $1, inventory_id = $2 WHERE procurement_id = $3', 
+        ['รับเข้าแล้ว', newInvId, procurement_id]
+      );
+    }
+
+    await pool.query('COMMIT');
     res.status(201).json({ message: 'Stock received successfully' });
   } catch (error) {
+    await pool.query('ROLLBACK');
     console.error(error);
     res.status(500).json({ message: 'Error receiving stock' });
   }
 });
 
-// 7. ลบล็อตสินค้า (เคลียร์ของเสีย/หมดอายุ)
+// 7. ลบล็อตสินค้า (เคลียร์ของเสีย)
 router.delete('/lot/:inventoryId', async (req, res) => {
   try {
     await pool.query('DELETE FROM inventory WHERE inventory_id = $1', [req.params.inventoryId]);

@@ -3,37 +3,31 @@
 // ระบบ: หน้าจอมือถือสำหรับไรเดอร์ (Mobile-First Rider Interface)
 // วัตถุประสงค์:
 //   - ออกแบบสำหรับแสดงผลบนหน้าจอสมาร์ตโฟนโดยเฉพาะ (Responsive Mobile UI)
-//   - ทำงานได้ทั้งบน Wi-Fi ภายในร้าน และเชื่อมต่อผ่านเน็ตมือถือ 4G/5G จากภายนอก
-//   - มีปุ่มลัดแตะโทรออกหาลูกค้าทันที (One-Touch Phone Call)
-//   - มีปุ่มลัดเปิดแอป Google Maps นำทางไปยังที่อยู่ลูกค้าโดยตรง
+//   - ล็อกข้อมูลให้แสดงเฉพาะงานของไรเดอร์ที่ล็อกอินอยู่เท่านั้น (ไม่มีสิทธิ์ดูงานคนอื่น)
+//   - มีปุ่มลัดแตะโทรออกหาลูกค้าทันที และเปิด Google Maps นำทาง
 //   - มีระบบแจ้งเตือนชัดเจนกรณีเก็บเงินปลายทาง (COD Warning)
-//   - อัปเดตสถานะ "เริ่มเดินทาง" และ "ส่งสำเร็จ" พร้อมบันทึกเวลาส่งมอบจริง
+//   - เพิ่มปุ่ม "กลับหน้า POS" เฉพาะสำหรับ Admin เท่านั้น
 // ==============================================================================
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './RiderDeliveryPage.css';
 import { 
   FaMotorcycle, 
   FaPhoneAlt, 
   FaMapMarkerAlt, 
   FaCheckCircle, 
-  FaClock, 
   FaMoneyBillWave, 
-  FaReceipt, 
   FaUser, 
   FaSyncAlt, 
   FaBoxOpen, 
-  FaArrowLeft 
+  FaSignOutAlt,
+  FaArrowLeft // นำเข้าไอคอนลูกศรย้อนกลับ
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 
 // ------------------------------------------------------------------------------
-// การกำหนด API Base URL แบบยืดหยุ่น:
-// - หากเปิดผ่าน Cloudflare Tunnel (*.trycloudflare.com) หรือผ่าน Vite Port 5173 
-//   จะใช้ค่าว่าง ('') เพื่อให้เบราว์เซอร์เรียกใช้ Vite Reverse Proxy ส่งต่อไปยังพอร์ต 5000 
-//   ซึ่งแก้ปัญหาเรื่อง CORS และไม่ต้องเปิดพอร์ต 5000 ออกสู่สาธารณะ
-// - หากเปิดตรงๆ ผ่าน IP เครื่อง ให้ชี้ไปยังพอร์ต 5000 ของเครื่องนั้น
+// การกำหนด API Base URL แบบยืดหยุ่น
 // ------------------------------------------------------------------------------
 const API_BASE = window.location.hostname.includes('trycloudflare.com') || 
                  window.location.hostname.includes('loca.lt') || 
@@ -43,65 +37,48 @@ const API_BASE = window.location.hostname.includes('trycloudflare.com') ||
   : `http://${window.location.hostname || 'localhost'}:5000`;
 
 export default function RiderDeliveryPage() {
+  const navigate = useNavigate();
+
   // ----------------------------------------------------------------------------
   // State Management:
-  // - riders: รายชื่อไรเดอร์ทั้งหมดสำหรับสลับดูงาน
-  // - selectedRiderId: รหัสไรเดอร์ที่เลือกอยู่ในปัจจุบัน
-  // - tasks: รายการงานส่งของของไรเดอร์คนนั้น
-  // - loading: แสดงสถานะการโหลดงาน
   // ----------------------------------------------------------------------------
-  const [riders, setRiders] = useState([]);
   const [selectedRiderId, setSelectedRiderId] = useState('');
+  const [riderName, setRiderName] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false); // State สำหรับเช็คว่าเป็น Admin หรือไม่
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ดึงรายชื่อไรเดอร์ทันทีที่เปิดหน้าเว็บ
+  // ทำงานครั้งแรกเมื่อเปิดหน้าจอ
   useEffect(() => {
-    fetchRiders();
-  }, []);
-
-  // เมื่อเลือกไรเดอร์คนใด ให้ดึงงานเฉพาะของไรเดอร์คนนั้น
-  useEffect(() => {
-    if (selectedRiderId) {
-      fetchRiderTasks(selectedRiderId);
-    }
-  }, [selectedRiderId]);
-
-  // ----------------------------------------------------------------------------
-  // ฟังก์ชัน: ดึงรายชื่อไรเดอร์ และตรวจจับว่าผู้ใช้ที่กำลังล็อกอินอยู่เป็นใคร
-  // ----------------------------------------------------------------------------
-  const fetchRiders = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/deliveries/riders`);
-      if (response.ok) {
-        const data = await response.json();
-        setRiders(data);
-
-        // ตรวจสอบข้อมูลผู้ใช้ใน sessionStorage หากผู้ใช้ล็อกอินอยู่ ให้เลือกชื่อให้อัตโนมัติ
-        const loggedInUserStr = sessionStorage.getItem('user');
-        if (loggedInUserStr) {
-          const userObj = JSON.parse(loggedInUserStr);
-          const found = data.find(r => r.employee_id === userObj.employee_id);
-          if (found) {
-            setSelectedRiderId(found.employee_id);
-            return;
-          }
-        }
-
-        // หากไม่ได้ล็อกอิน หรือไม่มีชื่อ ให้เลือกไรเดอร์คนแรกเป็นค่าเริ่มต้น
-        if (data.length > 0) {
-          setSelectedRiderId(data[0].employee_id);
-        }
+    // 1. ดึงข้อมูลผู้ใช้จาก Session
+    const loggedInUserStr = sessionStorage.getItem('user');
+    if (loggedInUserStr) {
+      const userObj = JSON.parse(loggedInUserStr);
+      setSelectedRiderId(userObj.employee_id);
+      
+      // ตรวจสอบว่าเป็น Admin หรือไม่ (Role ID = 1 หรือ Role = Admin)
+      const userRoleId = Number(userObj?.role_id) || 0;
+      if (userRoleId === 1 || userObj?.role === 'Admin') {
+        setIsAdmin(true);
       }
-    } catch (error) {
-      console.error('Error fetching riders:', error);
+
+      // กำหนดชื่อสำหรับแสดงผลบนหน้าจอ
+      const fullName = userObj.name || userObj.first_name || 'พนักงานจัดส่ง';
+      setRiderName(fullName);
+
+      // 2. โหลดงานของไรเดอร์คนนี้ทันที
+      fetchRiderTasks(userObj.employee_id);
+    } else {
+      // ถ้าไม่มี session ให้เตะกลับไปหน้าล็อกอินแบบไม่ให้กดย้อนกลับ
+      navigate('/login', { replace: true });
     }
-  };
+  }, [navigate]);
 
   // ----------------------------------------------------------------------------
   // ฟังก์ชัน: ดึงรายการงานส่งของของไรเดอร์คนนั้น
   // ----------------------------------------------------------------------------
   const fetchRiderTasks = async (riderId) => {
+    if (!riderId) return;
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE}/api/deliveries/my-tasks/${riderId}`);
@@ -116,7 +93,29 @@ export default function RiderDeliveryPage() {
   };
 
   // ----------------------------------------------------------------------------
-  // ฟังก์ชัน: ไรเดอร์กด "เริ่มออกส่งสินค้า" (เปลี่ยนสถานะเป็น OUT_FOR_DELIVERY)
+  // ฟังก์ชัน: ออกจากระบบ (Logout)
+  // ----------------------------------------------------------------------------
+  const handleLogout = () => {
+    Swal.fire({
+      title: 'ยืนยันการออกจากระบบ?',
+      text: "คุณต้องการเลิกงานและออกจากระบบใช่หรือไม่?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e74c3c',
+      cancelButtonColor: '#9ca3af',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+        navigate('/login', { replace: true }); 
+      }
+    });
+  };
+
+  // ----------------------------------------------------------------------------
+  // ฟังก์ชัน: ไรเดอร์กด "เริ่มออกส่งสินค้า"
   // ----------------------------------------------------------------------------
   const handleStartDelivery = async (deliveryId) => {
     try {
@@ -133,7 +132,7 @@ export default function RiderDeliveryPage() {
           timer: 1500,
           showConfirmButton: false
         });
-        fetchRiderTasks(selectedRiderId); // รีเฟรชรายการงาน
+        fetchRiderTasks(selectedRiderId); 
       }
     } catch (error) {
       Swal.fire('ผิดพลาด', 'ไม่สามารถอัปเดตสถานะได้', 'error');
@@ -141,32 +140,30 @@ export default function RiderDeliveryPage() {
   };
 
   // ----------------------------------------------------------------------------
-  // ฟังก์ชัน: ไรเดอร์กดยืนยัน "ส่งของสำเร็จและจบงาน" (เปลี่ยนสถานะเป็น DELIVERED)
-  // - มี Modal ยืนยัน พร้อมเตือนจำนวนเงินสดที่ต้องเก็บจากลูกค้า (COD)
+  // ฟังก์ชัน: ไรเดอร์กดยืนยัน "ส่งของสำเร็จและจบงาน"
   // ----------------------------------------------------------------------------
   const handleCompleteDelivery = (task) => {
     const isCod = task.payment_method === 'เก็บเงินปลายทาง' || task.payment_method === 'เงินสด';
 
     if (isCod) {
-      // กรณีเก็บเงินปลายทาง: ให้ไรเดอร์เลือกว่าลูกค้าจ่ายจริงเป็น "เงินสด" หรือ "เงินโอน"
       Swal.fire({
-        title: '🛵 ยืนยันการจัดส่ง & รับเงินปลายทาง',
+        title: ' ยืนยันการจัดส่ง & รับเงินปลายทาง',
         html: `
           <div style="text-align: left; font-size: 14px;">
             <p style="margin: 0 0 6px 0;"><strong>ลูกค้า:</strong> ${task.customer_name} (${task.customer_phone})</p>
             <p style="margin: 0 0 14px 0;"><strong>ยอดเงินที่ต้องเรียกเก็บ:</strong> <span style="color: #e11d48; font-size: 20px; font-weight: bold;">฿${Number(task.total_amount).toLocaleString()}</span></p>
             
             <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #0f172a;">
-              👉 ไรเดอร์โปรดระบุ: ลูกค้าชำระเงินจริงด้วยวิธีใด?
+               ไรเดอร์โปรดระบุ: ลูกค้าชำระเงินจริงด้วยวิธีใด?
             </label>
             <div style="display: flex; gap: 10px; margin-bottom: 14px;">
               <label style="flex: 1; border: 2px solid #0284c7; background: #f0f9ff; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 700; color: #0369a1;">
                 <input type="radio" name="rider_payment_method" value="เงินสด" checked style="margin-right: 6px; transform: scale(1.2);" />
-                💵 ลูกค้าจ่าย เงินสด
+                 ลูกค้าจ่าย เงินสด
               </label>
               <label style="flex: 1; border: 2px solid #10b981; background: #f0fdf4; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 700; color: #047857;">
                 <input type="radio" name="rider_payment_method" value="โอนเงิน" style="margin-right: 6px; transform: scale(1.2);" />
-                📱 ลูกค้า สแกนโอน
+                 ลูกค้า สแกนโอน
               </label>
             </div>
             <p style="color: #64748b; font-size: 12px; margin: 0; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px dashed #cbd5e1;">
@@ -178,7 +175,7 @@ export default function RiderDeliveryPage() {
         showCancelButton: true,
         confirmButtonColor: '#10b981',
         cancelButtonColor: '#94a3b8',
-        confirmButtonText: '✅ ยืนยันรับเงินและปิดบิล',
+        confirmButtonText: ' ยืนยันรับเงินและปิดบิล',
         cancelButtonText: 'ยังไม่เสร็จ',
         preConfirm: () => {
           const selected = document.querySelector('input[name="rider_payment_method"]:checked');
@@ -212,7 +209,6 @@ export default function RiderDeliveryPage() {
         }
       });
     } else {
-      // กรณีลูกค้าชำระเงินโอนล่วงหน้าแล้ว
       Swal.fire({
         title: 'ยืนยันการจัดส่งสำเร็จ?',
         html: `
@@ -252,44 +248,85 @@ export default function RiderDeliveryPage() {
     }
   };
 
-  // แยกงานที่ยังทำไม่เสร็จ (active) กับงานที่ส่งสำเร็จแล้ว (finished)
   const activeTasks = tasks.filter(t => t.delivery_status !== 'DELIVERED' && t.delivery_status !== 'CANCELLED');
   const finishedTasks = tasks.filter(t => t.delivery_status === 'DELIVERED');
 
   return (
     <div className="rider-mobile-container">
-      {/* ส่วนหัว Mobile App Bar ด้านบน */}
-      <div className="rider-top-bar">
+      {/* ส่วนหัว Mobile App Bar ด้านบน พร้อมปุ่ม Logout และปุ่มกลับ (เฉพาะ Admin) */}
+      <div className="rider-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="top-bar-left">
-          <Link to="/pos" className="btn-back-pos" title="กลับไปหน้า POS">
-            <FaArrowLeft />
-          </Link>
           <div>
             <h1 className="app-title"><FaMotorcycle /> POS Rider</h1>
             <p className="app-subtitle">ระบบจัดส่งสำหรับคนขับ</p>
           </div>
         </div>
 
-        {/* ปุ่มกดรีเฟรชงานใหม่ */}
-        <button className="btn-rider-refresh" onClick={() => fetchRiderTasks(selectedRiderId)} title="รีเฟรชงาน">
-          <FaSyncAlt />
-        </button>
+        {/* ปุ่มด้านขวา: นำทางและล็อกเอาต์ */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          
+          {/* แสดงปุ่ม "กลับหน้า POS" เฉพาะตอนที่ผู้ใช้เป็น Admin */}
+          {isAdmin && (
+            <button 
+              onClick={() => navigate('/pos')}
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.4)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                color: 'white',
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+              title="กลับไปที่หน้า POS หลัก"
+            >
+              <FaArrowLeft /> หน้า POS
+            </button>
+          )}
+
+          <button className="btn-rider-refresh" onClick={() => fetchRiderTasks(selectedRiderId)} title="รีเฟรชงาน">
+            <FaSyncAlt />
+          </button>
+          
+          <button 
+            onClick={handleLogout}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'white',
+              fontSize: '22px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+            title="ออกจากระบบ"
+          >
+            <FaSignOutAlt />
+          </button>
+        </div>
       </div>
 
-      {/* แถบเลือกคนขับ (สะดวกเมื่อเปิดผ่านมือถือหลายๆ เครื่อง) */}
-      <div className="rider-selector-card">
-        <label><FaUser /> คนขับปัจจุบัน:</label>
-        <select 
-          value={selectedRiderId} 
-          onChange={(e) => setSelectedRiderId(e.target.value)}
-          className="rider-dropdown"
-        >
-          {riders.map(r => (
-            <option key={r.employee_id} value={r.employee_id}>
-              {r.first_name} {r.last_name} ({r.employee_id})
-            </option>
-          ))}
-        </select>
+      {/* แถบแสดงโปรไฟล์คนขับปัจจุบัน */}
+      <div style={{ 
+        padding: '12px 20px', 
+        backgroundColor: 'white', 
+        margin: '15px', 
+        borderRadius: '10px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)', 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '12px' 
+      }}>
+        <div style={{ background: '#fff7ed', padding: '10px', borderRadius: '50%' }}>
+          <FaUser style={{ color: '#e65100', fontSize: '20px' }} />
+        </div>
+        <div>
+          <div style={{ fontSize: '13px', color: '#64748b' }}>คนขับปัจจุบัน {isAdmin && <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>(Admin)</span>}</div>
+          <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '16px' }}>{riderName || 'กำลังโหลด...'}</div>
+        </div>
       </div>
 
       {/* กล่องสรุปจำนวนงาน (Dashboard Stats) */}
@@ -325,7 +362,6 @@ export default function RiderDeliveryPage() {
 
             return (
               <div key={task.delivery_id} className={`rider-task-card status-${task.delivery_status.toLowerCase()}`}>
-                {/* หัวการ์ด: รหัสจัดส่ง และสถานะ */}
                 <div className="task-card-header">
                   <div>
                     <span className="task-id-badge">#DEL-{task.delivery_id}</span>
@@ -336,7 +372,6 @@ export default function RiderDeliveryPage() {
                   </span>
                 </div>
 
-                {/* ข้อมูลลูกค้า และที่อยู่จัดส่ง */}
                 <div className="task-customer-box">
                   <h3 className="customer-name">{task.customer_name}</h3>
                   <div className="customer-address">
@@ -350,13 +385,10 @@ export default function RiderDeliveryPage() {
                   )}
                 </div>
 
-                {/* ปุ่มแตะด่วนสำหรับมือถือ: แตะโทรหาลูกค้า และ แตะเปิด Google Maps */}
                 <div className="rider-quick-actions">
-                  {/* tel: protocol จะเรียกเปิดหน้าโทรศัพท์ของสมาร์ตโฟนทันที */}
                   <a href={`tel:${task.customer_phone}`} className="btn-action btn-call">
                     <FaPhoneAlt /> โทรหาลูกค้า ({task.customer_phone})
                   </a>
-                  {/* Google Maps Search URL API พร้อม encodeURIComponent รองรับภาษาไทย */}
                   <a 
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(task.delivery_address)}`} 
                     target="_blank" 
@@ -367,22 +399,20 @@ export default function RiderDeliveryPage() {
                   </a>
                 </div>
 
-                {/* รายการสินค้าในออเดอร์ */}
                 <div className="task-items-list">
                   <span className="items-title">รายการอาหาร/เครื่องดื่ม:</span>
                   {items.map((it, idx) => (
                     <div key={idx} className="item-row">
-                      <span>• {it.quantity}x {it.product_name}</span>
+                      <span>{it.quantity}x {it.product_name}</span>
                       <span>฿{(it.price * it.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                   <div className="item-row delivery-fee-row">
-                    <span>• ค่าจัดส่ง</span>
+                    <span>ค่าจัดส่ง</span>
                     <span>฿{Number(task.delivery_fee).toLocaleString()}</span>
                   </div>
                 </div>
 
-                {/* แถบแจ้งเตือนการชำระเงิน (COD vs ชำระแล้ว) */}
                 <div className={`payment-notice ${isCod ? 'notice-cod' : 'notice-paid'}`}>
                   <div className="payment-notice-left">
                     <FaMoneyBillWave />
@@ -400,7 +430,6 @@ export default function RiderDeliveryPage() {
                   </span>
                 </div>
 
-                {/* ปุ่มกดเปลี่ยนสถานะงานตามลำดับขั้นตอน */}
                 <div className="task-footer-actions">
                   {task.delivery_status !== 'OUT_FOR_DELIVERY' ? (
                     <button 
@@ -424,7 +453,6 @@ export default function RiderDeliveryPage() {
         )}
       </div>
 
-      {/* ส่วนประวัติออเดอร์ที่ส่งสำเร็จแล้วของวัน */}
       {finishedTasks.length > 0 && (
         <div className="finished-tasks-section">
           <h3 className="section-title-sub">

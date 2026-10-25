@@ -20,6 +20,10 @@ import Swal from "sweetalert2";
 const AVAILABLE_PERMISSIONS = [
   { id: "menu_pos", label: "ระบบขาย POS หน้าร้าน", category: "เมนูหลัก" },
   { id: "menu_delivery", label: "จัดการการส่งสินค้า (Delivery)", category: "เมนูหลัก" },
+  
+  // เพิ่มสิทธิ์ของไรเดอร์ตรงนี้ เพื่อให้แอดมินติ๊กเลือกให้ตำแหน่งคนขับรถได้
+  { id: "menu_rider", label: "งานจัดส่งของฉัน (Mobile Rider)", category: "เมนูหลัก" },
+  
   { id: "menu_promotions", label: "จัดการโปรโมชั่นส่วนลด", category: "เมนูหลัก" },
   { id: "menu_procurement", label: "การจัดซื้อวัตถุดิบ (Procurement)", category: "เมนูหลัก" },
   { id: "menu_products", label: "จัดการข้อมูลสินค้า", category: "เมนูหลัก" },

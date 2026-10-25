@@ -1,30 +1,11 @@
-// ==============================================================================
-// ไฟล์: back_end/src/routes/procurementRoutes.js
-// ระบบ: การจัดซื้อวัตถุดิบ (Material Procurement & Simple Receiving)
-// หน้าที่:
-//   1. บันทึกรับวัตถุดิบเข้าสต็อก (Simple Receiving) เชื่อมโยงกับระบบสต็อกแบบ FIFO
-//   2. สร้างล็อตวัตถุดิบใหม่ลงตาราง `inventory` ทันทีเพื่อให้หน้าร้านพร้อมชงขาย
-//   3. เก็บประวัติการซื้อลงตาราง `material_procurement` เพื่อบันทึกต้นทุน, คู่ค้า (Supplier), และเลขที่บิล
-//   4. ให้บริการข้อมูลสรุปภาพรวมค่าใช้จ่ายจัดซื้อวัตถุดิบ (Procurement Analytics)
-// ==============================================================================
-
 const express = require('express');
 const router = express.Router();
 const pool = require('../../db');
 
-// ------------------------------------------------------------------------------
-// 1. GET /api/procurements
-// คำอธิบาย: ดึงประวัติการจัดซื้อวัตถุดิบทั้งหมด รองรับการกรองตามวัตถุดิบและช่วงวันที่
-// Query Parameters:
-//   - ingredient_id: รหัสวัตถุดิบที่ต้องการดูประวัติ
-//   - startDate, endDate: ช่วงวันที่ต้องการดูข้อมูล
-// ------------------------------------------------------------------------------
+// 1. GET /api/procurements (ดึงประวัติการจัดซื้อทั้งหมด)
 router.get('/', async (req, res) => {
   try {
     const { startDate, endDate, ingredient_id } = req.query;
-
-    // เชื่อมตาราง material_procurement เข้ากับ ingredients (เพื่อเอาชื่อและหน่วยนับ)
-    // และ employee (เพื่อเอาชื่อพนักงานผู้รับของ)
     let query = `
       SELECT 
         mp.procurement_id,
@@ -42,6 +23,7 @@ router.get('/', async (req, res) => {
         mp.received_by,
         COALESCE(e.first_name || ' ' || e.last_name, mp.received_by) AS receiver_name,
         mp.inventory_id,
+        mp.status,
         mp.created_at
       FROM material_procurement mp
       JOIN ingredients i ON mp.ingredient_id = i.ingredient_id
@@ -51,22 +33,17 @@ router.get('/', async (req, res) => {
     const params = [];
     let idx = 1;
 
-    // กรองตามวัตถุดิบ
     if (ingredient_id && ingredient_id !== 'ALL') {
       query += ` AND mp.ingredient_id = $${idx}`;
       params.push(ingredient_id);
       idx++;
     }
-
-    // กรองตามช่วงวันที่ซื้อ
     if (startDate && endDate) {
       query += ` AND mp.purchase_date >= $${idx} AND mp.purchase_date <= $${idx + 1}`;
       params.push(startDate, endDate);
       idx += 2;
     }
-
     query += ` ORDER BY mp.purchase_date DESC, mp.procurement_id DESC`;
-
     const result = await pool.query(query, params);
     res.status(200).json(result.rows);
   } catch (error) {
@@ -75,30 +52,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ------------------------------------------------------------------------------
-// 2. POST /api/procurements
-// คำอธิบาย: บันทึกรับวัตถุดิบเข้าสต็อก (Simple Receiving)
-// กลไกการทำงานสำคัญ:
-//   - ใช้ Database Transaction (BEGIN ... COMMIT)
-//   - ขั้นที่ 1: สร้างแถวใหม่ในตาราง `inventory` ทันที โดยบันทึก purchase_date และ expiration_date 
-//              เพื่อให้สูตรการตัดสต็อกแบบ FIFO ในหน้าขายสามารถนำไปตัดใช้งานได้ทันที
-//   - ขั้นที่ 2: นำ `inventory_id` ที่ได้ ไปบันทึกลงตาราง `material_procurement`
-//              พร้อมบันทึกชื่อผู้ขาย ราคาต่อหน่วย ยอดเงินรวม และผู้ตรวจรับ
-// ------------------------------------------------------------------------------
+// 2. POST /api/procurements (เพิ่มข้อมูลจัดซื้อใหม่)
 router.post('/', async (req, res) => {
-  const { 
-    ingredient_id, 
-    supplier_name, 
-    quantity, 
-    unit_cost, 
-    total_cost, 
-    purchase_date, 
-    expiration_date, 
-    invoice_number, 
-    notes, 
-    received_by 
-  } = req.body;
-
+  const { ingredient_id, supplier_name, quantity, unit_cost, total_cost, purchase_date, expiration_date, invoice_number, notes, received_by } = req.body;
+  
   if (!ingredient_id || !quantity || !unit_cost) {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลวัตถุดิบ จำนวน และราคาต่อหน่วยให้ครบถ้วน' });
   }
@@ -108,61 +65,88 @@ router.post('/', async (req, res) => {
   const calculatedTotal = total_cost || (parseFloat(quantity) * parseFloat(unit_cost));
 
   try {
-    await pool.query('BEGIN');
-
-    // 1. เพิ่มล็อตวัตถุดิบเข้าตาราง inventory ทันที เพื่อให้การขายและตัดสต็อก FIFO ใช้งานได้เลย
-    const invRes = await pool.query(
-      `INSERT INTO inventory (ingredient_id, quantity, purchase_date, expiration_date)
-       VALUES ($1, $2, $3, $4) RETURNING inventory_id`,
-      [ingredient_id, Math.round(parseFloat(quantity)), pDate, expDate]
-    );
-    const newInventoryId = invRes.rows[0].inventory_id;
-
-    // 2. บันทึกลงตารางประวัติการจัดซื้อ material_procurement เพื่อใช้คุมต้นทุนและทำ Data Analysis
     const procRes = await pool.query(
       `INSERT INTO material_procurement 
-       (supplier_name, ingredient_id, quantity, unit_cost, total_cost, purchase_date, expiration_date, invoice_number, notes, received_by, inventory_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING procurement_id`,
-      [
-        supplier_name || 'ทั่วไป / ซื้อสด',
-        ingredient_id,
-        quantity,
-        unit_cost,
-        calculatedTotal,
-        pDate,
-        expDate,
-        invoice_number || null,
-        notes || null,
-        received_by || null,
-        newInventoryId
-      ]
+       (supplier_name, ingredient_id, quantity, unit_cost, total_cost, purchase_date, expiration_date, invoice_number, notes, received_by, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'รอรับของ') RETURNING procurement_id`,
+      [supplier_name || 'ทั่วไป / ซื้อสด', ingredient_id, quantity, unit_cost, calculatedTotal, pDate, expDate, invoice_number || null, notes || null, received_by || null]
     );
 
-    await pool.query('COMMIT');
     res.status(201).json({ 
-      message: 'บันทึกรับวัตถุดิบเข้าสต็อกเรียบร้อยแล้ว!',
-      procurement_id: procRes.rows[0].procurement_id,
-      inventory_id: newInventoryId
+      message: 'บันทึกใบสั่งซื้อสำเร็จ! โปรดไปรับของที่หน้าสต็อกเพื่อตัดยอด FIFO',
+      procurement_id: procRes.rows[0].procurement_id
     });
 
   } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error('Error in procurement simple receiving:', error);
+    console.error('Error in procurement:', error);
     res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกการจัดซื้อวัตถุดิบ' });
   }
 });
 
-// ------------------------------------------------------------------------------
-// 3. GET /api/procurements/summary
-// คำอธิบาย: สรุปภาพรวมค่าใช้จ่ายจัดซื้อวัตถุดิบ (Procurement Spend Analytics)
-// สิ่งที่คำนวณ:
-//   - overview: ยอดซื้อรวมทั้งหมด, ค่าเฉลี่ยต่อบิล
-//   - ingredientSpend: 10 อันดับวัตถุดิบที่ร้านจ่ายเงินซื้อมากที่สุด
-//   - supplierSpend: สัดส่วนรายจ่ายแยกตามคู่ค้า/ผู้ขาย
-// ------------------------------------------------------------------------------
+// 3. PUT /api/procurements/:id (แก้ไขบิลจัดซื้อ - ดักสถานะห้ามแก้ถ้ารับเข้าแล้ว)
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { ingredient_id, supplier_name, quantity, unit_cost, total_cost, purchase_date, expiration_date, invoice_number, notes } = req.body;
+
+  try {
+    const checkStatus = await pool.query('SELECT status FROM material_procurement WHERE procurement_id = $1', [id]);
+    if (checkStatus.rows.length === 0) return res.status(404).json({ message: 'ไม่พบข้อมูลบิลนี้' });
+    if (checkStatus.rows[0].status === 'รับเข้าแล้ว') {
+      return res.status(400).json({ message: 'ไม่สามารถแก้ไขได้ เนื่องจากรับของเข้าคลังสต็อกไปแล้ว' });
+    }
+
+    const calculatedTotal = total_cost || (parseFloat(quantity) * parseFloat(unit_cost));
+    await pool.query(
+      `UPDATE material_procurement 
+       SET ingredient_id=$1, supplier_name=$2, quantity=$3, unit_cost=$4, total_cost=$5, purchase_date=$6, expiration_date=$7, invoice_number=$8, notes=$9
+       WHERE procurement_id=$10`,
+      [ingredient_id, supplier_name || 'ทั่วไป / ซื้อสด', quantity, unit_cost, calculatedTotal, purchase_date, expiration_date || null, invoice_number || null, notes || null, id]
+    );
+    res.status(200).json({ message: 'อัปเดตข้อมูลการจัดซื้อสำเร็จ' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating procurement' });
+  }
+});
+
+// 4. DELETE /api/procurements/:id (ลบบิลจัดซื้อ - ดักสถานะห้ามลบถ้ารับเข้าแล้ว)
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const checkStatus = await pool.query('SELECT status FROM material_procurement WHERE procurement_id = $1', [id]);
+    if (checkStatus.rows.length === 0) return res.status(404).json({ message: 'ไม่พบข้อมูลบิลนี้' });
+    if (checkStatus.rows[0].status === 'รับเข้าแล้ว') {
+      return res.status(400).json({ message: 'ไม่สามารถลบได้ เนื่องจากสินค้าถูกนำไปบวกในสต็อกแล้ว' });
+    }
+
+    await pool.query('DELETE FROM material_procurement WHERE procurement_id = $1', [id]);
+    res.status(200).json({ message: 'ลบข้อมูลสำเร็จ' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting procurement' });
+  }
+});
+
+// 5. GET /api/procurements/pending/:id (API สำหรับดึงบิลที่รอรับของ ไปโชว์หน้าสต็อก)
+router.get('/pending/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT procurement_id, supplier_name, quantity, TO_CHAR(purchase_date, 'DD/MM/YYYY') as p_date 
+       FROM material_procurement 
+       WHERE ingredient_id = $1 AND status = 'รอรับของ'
+       ORDER BY purchase_date ASC`,
+      [req.params.id]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching pending POs:', error);
+    res.status(500).json({ message: 'Error fetching pending PO' });
+  }
+});
+
+// 6. GET /api/procurements/summary (ดึงตัวเลข Dashboard)
 router.get('/summary', async (req, res) => {
   try {
-    // 3.1 ยอดรวมค่าใช้จ่ายทั้งหมด
     const totalRes = await pool.query(`
       SELECT 
         COUNT(procurement_id) AS total_orders,
@@ -170,8 +154,6 @@ router.get('/summary', async (req, res) => {
         COALESCE(ROUND(AVG(total_cost), 2), 0) AS avg_spend_per_purchase
       FROM material_procurement
     `);
-
-    // 3.2 รายจ่ายแยกตามวัตถุดิบ (Top Ingredients Spend)
     const ingredientSpendRes = await pool.query(`
       SELECT 
         i.ingredient_id,
@@ -185,8 +167,6 @@ router.get('/summary', async (req, res) => {
       ORDER BY total_spent DESC
       LIMIT 10
     `);
-
-    // 3.3 รายจ่ายแยกตามผู้ขาย/คู่ค้า (Supplier Breakdown)
     const supplierRes = await pool.query(`
       SELECT 
         COALESCE(supplier_name, 'ไม่ระบุ') AS supplier_name,
@@ -196,7 +176,6 @@ router.get('/summary', async (req, res) => {
       GROUP BY supplier_name
       ORDER BY total_amount DESC
     `);
-
     res.status(200).json({
       overview: totalRes.rows[0],
       ingredientSpend: ingredientSpendRes.rows,
