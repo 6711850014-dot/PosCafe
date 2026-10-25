@@ -24,6 +24,23 @@
   color: #2c3e50;
   font-size: 24px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Original rule replaced */
+.page-header-old h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 /* ปุ่มเพิ่มพนักงาน (สีฟ้าครามตามรูป) */

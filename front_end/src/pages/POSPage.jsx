@@ -12,7 +12,8 @@ import {
   FaTag, 
   FaUser, 
   FaPhoneAlt, 
-  FaMapMarkerAlt 
+  FaMapMarkerAlt,
+  FaCashRegister 
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
@@ -310,7 +311,8 @@ function POSPage() {
       <div className="pos-main">
         <div className="pos-header">
           <div>
-            <h2>ระบบขายหน้าร้าน (POS)</h2>
+            <h2><FaCashRegister /> ระบบขายหน้าร้าน (POS System)</h2>
+            <p className="pos-subtitle">บันทึกรายการขาย คิดเงิน คำนวณส่วนลดอัตโนมัติ และสั่งพิมพ์ใบเสร็จ</p>
             <div className="order-type-switch">
               <button 
                 type="button"
@@ -464,7 +466,7 @@ function POSPage() {
       {/* ฝั่งขวา: ตะกร้าสินค้า */}
       <div className="pos-sidebar">
         <div className="cart-header">
-          <h3>🛒 ออเดอร์ปัจจุบัน</h3>
+          <h3>ออเดอร์ปัจจุบัน</h3>
           {orderType === 'delivery' && <span className="cart-delivery-tag"><FaMotorcycle /> เดลิเวอรี่</span>}
         </div>
 
@@ -550,7 +552,7 @@ function POSPage() {
               {/* ข้อมูลการจัดส่ง */}
               <div style={{ padding: '14px', background: '#f8fafc', borderRadius: '10px', margin: '15px 0', border: '1px solid #e2e8f0' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e293b', marginBottom: '8px' }}>
-                  🛵 ข้อมูลผู้รับสินค้า
+                  ข้อมูลผู้รับสินค้า
                 </div>
                 <div style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
                   <div><strong>ลูกค้า:</strong> {deliveryInfo.customer_name} ({deliveryInfo.customer_phone})</div>
@@ -621,8 +623,8 @@ function POSPage() {
                 onClick={confirmPayment}
               >
                 {paymentMethod === 'เก็บเงินปลายทาง' 
-                  ? '🚀 ยืนยันคำสั่งซื้อ (ส่งงานให้ไรเดอร์)' 
-                  : '✅ ยืนยันการรับเงินโอน (ส่งงานให้ไรเดอร์)'}
+                  ? 'ยืนยันคำสั่งซื้อ (ส่งงานให้ไรเดอร์)' 
+                  : 'ยืนยันการรับเงินโอน (ส่งงานให้ไรเดอร์)'}
               </button>
             </div>
           ) : (
@@ -686,7 +688,7 @@ function POSPage() {
               <div className="receipt-header">
                 <h3 style={{ margin: 0 }}>POS CAFE</h3>
                 <p style={{ margin: '5px 0', fontSize: '12px' }}>
-                  {completedOrder.orderType === 'delivery' ? '🛵 ใบเสร็จรับเงิน (เดลิเวอรี่)' : 'ใบเสร็จรับเงิน / ย่อ'}
+                  {completedOrder.orderType === 'delivery' ? 'ใบเสร็จรับเงิน (เดลิเวอรี่)' : 'ใบเสร็จรับเงิน / ย่อ'}
                 </p>
                 <div style={{ fontSize: '12px', textAlign: 'left', marginTop: '10px' }}>
                   <div>เลขที่บิล: #{completedOrder.order_id}</div>

@@ -23,6 +23,23 @@
   color: #2c3e50;
   font-size: 24px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prod-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Original rule replaced */
+.prod-header-old h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .prod-header-actions {

@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -57,18 +57,107 @@
   transform: translateY(-1px);
 }
 
-/* Grid */
+/* ================= Toolbar: ค้นหา & ตัวกรอง ================= */
+.promo-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.promo-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+  flex: 1;
+  max-width: 360px;
+}
+
+.promo-search-box .search-icon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.promo-search-box input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.promo-search-box input:focus {
+  border-color: #0284c7;
+}
+
+.promo-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-icon {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.filter-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+  background: #e2e8f0;
+}
+
+.filter-btn.active {
+  background: #0284c7;
+  color: white;
+  border-color: #0284c7;
+}
+
+/* ================= Grid แสดงการ์ด ================= */
 .promo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 
+.promo-loading,
+.promo-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px 20px;
+  color: #64748b;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
 .promo-card {
   background-color: white;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
-  padding: 20px;
+  padding: 18px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -97,17 +186,34 @@
   margin-bottom: 12px;
 }
 
+.promo-top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.promo-id-tag {
+  background-color: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.5px;
+}
+
 .promo-badge-percent {
   background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
   color: white;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25);
 }
 
 .btn-toggle {
@@ -115,8 +221,8 @@
   border: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   color: #94a3b8;
@@ -128,19 +234,60 @@
 }
 
 .btn-toggle svg {
-  font-size: 18px;
+  font-size: 17px;
+}
+
+.promo-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .promo-card-title {
-  margin: 0 0 6px 0;
-  font-size: 17px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 700;
   color: #0f172a;
+  flex: 1;
+}
+
+/* ป้ายสถานะโปรโมชั่น */
+.promo-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-active {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-upcoming {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-expired {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-disabled {
+  background-color: #f1f5f9;
+  color: #64748b;
 }
 
 .promo-card-desc {
-  margin: 0 0 12px 0;
-  font-size: 13px;
+  margin: 0 0 10px 0;
+  font-size: 12px;
   color: #64748b;
   line-height: 1.4;
 }
@@ -151,20 +298,18 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 14px;
-}
-
-.tag-expired {
-  color: #dc2626;
-  font-weight: 700;
-  margin-left: 6px;
+  margin-bottom: 12px;
+  background-color: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
 }
 
 .promo-products-box {
   background-color: #f8fafc;
   border-radius: 8px;
   padding: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   flex: 1;
 }
 
@@ -180,15 +325,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  max-height: 80px;
+  max-height: 75px;
   overflow-y: auto;
 }
 
 .prod-promo-pill {
   background-color: white;
   border: 1px solid #cbd5e1;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   font-size: 11px;
   font-weight: 600;
   color: #334155;
@@ -204,9 +349,9 @@
 .btn-promo-edit,
 .btn-promo-delete {
   flex: 1;
-  padding: 8px;
+  padding: 7px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -235,7 +380,7 @@
   background-color: #fecaca;
 }
 
-/* Modal */
+/* ================= Modal ================= */
 .promo-modal-overlay {
   position: fixed;
   top: 0;
@@ -248,17 +393,19 @@
   justify-content: center;
   z-index: 9999;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .promo-modal-box {
   background-color: white;
   border-radius: 14px;
   width: 100%;
-  max-width: 650px;
+  max-width: 680px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   padding: 24px;
+  box-sizing: border-box;
 }
 
 .promo-modal-header {
@@ -302,6 +449,12 @@
   margin-bottom: 6px;
 }
 
+.label-tip {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: normal;
+}
+
 .form-group input,
 .form-group select {
   width: 100%;
@@ -338,7 +491,7 @@
   font-size: 14px;
 }
 
-/* Products selection grid */
+/* ================= Products selection grid in Modal ================= */
 .products-selection-section {
   margin-top: 16px;
   border-top: 1px solid #f1f5f9;
@@ -355,20 +508,19 @@
 .section-title-label {
   font-size: 13px;
   font-weight: 700;
-  color: #1e293b;
+  color: #334155;
 }
 
 .quick-btn-group {
   display: flex;
+  align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: #94a3b8;
 }
 
 .btn-text {
   background: none;
   border: none;
-  color: #ef4444;
+  color: #0284c7;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -381,42 +533,52 @@
 
 .products-grid-select {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 8px;
   max-height: 220px;
   overflow-y: auto;
-  padding-right: 4px;
-}
-
-.product-select-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
+  padding: 4px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background-color: #f8fafc;
+}
+
+.product-select-card {
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
 }
 
 .product-select-card:hover {
+  border-color: #94a3b8;
   background-color: #f1f5f9;
 }
 
 .product-select-card.selected {
+  border-color: #ef4444;
   background-color: #fef2f2;
-  border-color: #fca5a5;
+}
+
+.product-select-card.has-conflict {
+  border-left: 3px solid #f59e0b;
 }
 
 .prod-select-info {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  gap: 2px;
 }
 
 .p-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #1e293b;
 }
@@ -432,49 +594,60 @@
 }
 
 .p-price strong {
-  color: #ef4444;
+  color: #dc2626;
+  font-weight: 700;
 }
 
-/* Modal Footer */
+.conflict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #b45309;
+  background-color: #fef3c7;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 2px;
+  width: fit-content;
+}
+
 .promo-modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 24px;
+  margin-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
 }
 
 .btn-cancel {
   background-color: #f1f5f9;
   color: #475569;
-  border: 1px solid #cbd5e1;
-  padding: 10px 18px;
+  border: 1px solid #e2e8f0;
+  padding: 9px 16px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
 
+.btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
 .btn-save {
   background-color: #ef4444;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 9px 20px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .btn-save:hover {
   background-color: #dc2626;
-}
-
-.promo-loading,
-.promo-empty {
-  grid-column: 1 / -1;
-  padding: 60px 20px;
-  text-align: center;
-  background-color: white;
-  border-radius: 12px;
-  color: #64748b;
 }

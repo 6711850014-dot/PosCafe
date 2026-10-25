@@ -6,6 +6,7 @@
 //   2. จัดการความสัมพันธ์ระหว่างโปรโมชั่นกับสินค้าที่ร่วมรายการ (ตาราง promotion_products)
 //   3. ให้บริการ Endpoint `/active` สำหรับระบบ POS ใช้คำนวณราคาพิเศษอัตโนมัติ
 //   4. ตรวจสอบวันหมดอายุ (Start Date / End Date) และสวิตช์เปิด-ปิดการใช้งาน
+//   5. ตรวจสอบป้องกันโปรโมชั่นที่ชื่อเหมือนกัน + ช่วงเวลาเหมือนกัน + ส่วนลดเท่ากัน (Exact Duplicate)
 // ==============================================================================
 
 const express = require('express');
@@ -15,10 +16,6 @@ const pool = require('../../db');
 // ------------------------------------------------------------------------------
 // 1. GET /api/promotions
 // คำอธิบาย: ดึงโปรโมชั่นทั้งหมด พร้อมรายการสินค้าที่ผูกอยู่กับแต่ละโปรโมชั่น
-// จุดเด่นของ Query นี้:
-//   - ใช้ CASE WHEN ตรวจสอบว่าโปรโมชั่น 'EXPIRED' (หมดอายุตามวันที่) หรือ 'DISABLED' (ปิดสวิตช์) หรือ 'ACTIVE'
-//   - ใช้ json_agg(...) ร่วมกับ FILTER (WHERE p.product_id IS NOT NULL) เพื่อดึงสินค้าที่ร่วมรายการ
-//     ออกมาเป็น Array ซ้อนอยู่ในแต่ละโปรโมชั่นทันที
 // ------------------------------------------------------------------------------
 router.get('/', async (req, res) => {
   try {
@@ -32,13 +29,12 @@ router.get('/', async (req, res) => {
         TO_CHAR(pr.end_date, 'YYYY-MM-DD') AS end_date,
         pr.is_active,
         pr.created_at,
-        -- ตรวจสอบสถานะความพร้อมใช้งานแบบไดนามิก
         CASE 
-          WHEN CURRENT_DATE > pr.end_date THEN 'EXPIRED'
           WHEN NOT pr.is_active THEN 'DISABLED'
+          WHEN CURRENT_DATE > pr.end_date THEN 'EXPIRED'
+          WHEN CURRENT_DATE < pr.start_date THEN 'UPCOMING'
           ELSE 'ACTIVE'
         END AS status,
-        -- ดึงรายชื่อสินค้าที่ร่วมรายการเป็น JSON Array
         COALESCE(
           json_agg(
             json_build_object(
@@ -64,15 +60,13 @@ router.get('/', async (req, res) => {
 
 // ------------------------------------------------------------------------------
 // 2. GET /api/promotions/active
-// คำอธิบาย: ดึงโปรโมชั่นที่มีผลบังคับใช้ในวันนี้ (CURRENT_DATE อยู่ระหว่าง start_date ถึง end_date)
-// วัตถุประสงค์: หน้า POS จะยิง API นี้ตอนเปิดเครื่อง เพื่อนำไปจับคู่กับเมนูและคำนวณส่วนลดอัตโนมัติ
-// การคำนวณ:
-//   discounted_price = ROUND(p.price * (1 - pr.discount_percentage / 100), 2)
+// คำอธิบาย: ดึงโปรโมชั่นที่มีผลบังคับใช้ในวันนี้
+// ใช้ DISTINCT ON (pp.product_id) เพื่อให้สินค้าแต่ละตัวใช้ส่วนลดที่ดีที่สุดเพียงรายการเดียว
 // ------------------------------------------------------------------------------
 router.get('/active', async (req, res) => {
   try {
     const query = `
-      SELECT 
+      SELECT DISTINCT ON (pp.product_id)
         pr.promotion_id,
         pr.promotion_name,
         pr.discount_percentage,
@@ -86,6 +80,7 @@ router.get('/active', async (req, res) => {
       WHERE pr.is_active = TRUE
         AND CURRENT_DATE >= pr.start_date
         AND CURRENT_DATE <= pr.end_date
+      ORDER BY pp.product_id, pr.discount_percentage DESC, pr.promotion_id DESC
     `;
     const result = await pool.query(query);
     res.status(200).json(result.rows);
@@ -96,14 +91,46 @@ router.get('/active', async (req, res) => {
 });
 
 // ------------------------------------------------------------------------------
+// Helper: ตรวจสอบว่ามีโปรโมชั่นที่ "ซ้ำเหมือนกันทั้งหมด" หรือไม่
+//   เงื่อนไข "ซ้ำ" = ชื่อเหมือนกัน AND เปอร์เซ็นต์ลดเท่ากัน AND ช่วงวันที่ทับซ้อนกัน
+//   บล็อกเฉพาะกรณีนี้เท่านั้น (Exact Duplicate Prevention)
+//   ส่วนสินค้าซ้อนทับจะเป็นแค่ "เตือน" บน Frontend ไม่บล็อกที่ Backend
+// ------------------------------------------------------------------------------
+async function checkExactDuplicate(promoId, name, discountPct, startDate, endDate) {
+  const query = `
+    SELECT 
+      promotion_id, 
+      promotion_name, 
+      discount_percentage,
+      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date, 
+      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date
+    FROM promotions
+    WHERE LOWER(TRIM(promotion_name)) = LOWER(TRIM($1))
+      AND discount_percentage = $2
+      AND ($3::date <= end_date AND $4::date >= start_date)
+      ${promoId ? 'AND promotion_id != $5' : ''}
+  `;
+  const params = promoId
+    ? [name.trim(), discountPct, startDate, endDate, promoId]
+    : [name.trim(), discountPct, startDate, endDate];
+
+  const result = await pool.query(query, params);
+
+  if (result.rows.length > 0) {
+    const dup = result.rows[0];
+    return {
+      isDuplicate: true,
+      message: `พบโปรโมชั่นที่ซ้ำกันทั้งหมดในระบบ: "${dup.promotion_name}" (รหัส #PR-${dup.promotion_id}, ลด ${dup.discount_percentage}%, ช่วง ${dup.start_date} ถึง ${dup.end_date}) กรุณาเปลี่ยนชื่อ หรือเปอร์เซ็นต์ลด หรือช่วงเวลาให้แตกต่างอย่างน้อย 1 อย่าง`
+    };
+  }
+
+  return { isDuplicate: false };
+}
+
+// ------------------------------------------------------------------------------
 // 3. POST /api/promotions
 // คำอธิบาย: สร้างโปรโมชั่นใหม่ และผูกรายการสินค้าที่ร่วมรายการ
-// Request Body:
-//   - promotion_name: ชื่อโปรโมชั่น
-//   - description: รายละเอียดเงื่อนไข
-//   - discount_percentage: เปอร์เซ็นต์ส่วนลด (เช่น 10, 15, 20)
-//   - start_date, end_date: วันที่เริ่มต้นและสิ้นสุด
-//   - product_ids: Array ของ product_id เช่น [1, 2, 5]
+// การตรวจสอบ: บล็อกเฉพาะกรณีซ้ำเหมือนกันทั้งหมด (ชื่อ + % + ช่วงเวลา)
 // ------------------------------------------------------------------------------
 router.post('/', async (req, res) => {
   const { promotion_name, description, discount_percentage, start_date, end_date, product_ids } = req.body;
@@ -112,14 +139,33 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลโปรโมชั่นให้ครบถ้วน' });
   }
 
+  const numDiscount = Number(discount_percentage);
+  if (isNaN(numDiscount) || numDiscount <= 0 || numDiscount > 100) {
+    return res.status(400).json({ message: 'เปอร์เซ็นต์ส่วนลดต้องอยู่ระหว่าง 1 ถึง 100%' });
+  }
+
+  if (new Date(end_date) < new Date(start_date)) {
+    return res.status(400).json({ message: 'วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น' });
+  }
+
+  if (!Array.isArray(product_ids) || product_ids.length === 0) {
+    return res.status(400).json({ message: 'กรุณาเลือกสินค้าที่ต้องการลดราคาอย่างน้อย 1 รายการ' });
+  }
+
   try {
-    await pool.query('BEGIN'); // เริ่ม Transaction บันทึก 2 ตารางพร้อมกัน
+    // ตรวจสอบเฉพาะ Exact Duplicate: ชื่อเดียวกัน + %เท่ากัน + ช่วงเวลาทับซ้อนกัน
+    const dupCheck = await checkExactDuplicate(null, promotion_name, numDiscount, start_date, end_date);
+    if (dupCheck.isDuplicate) {
+      return res.status(400).json({ message: dupCheck.message });
+    }
+
+    await pool.query('BEGIN');
 
     // 1. บันทึกข้อมูลโปรโมชั่นหลัก
     const promoRes = await pool.query(
       `INSERT INTO promotions (promotion_name, description, discount_percentage, start_date, end_date, is_active)
        VALUES ($1, $2, $3, $4, $5, TRUE) RETURNING promotion_id`,
-      [promotion_name, description || '', discount_percentage, start_date, end_date]
+      [promotion_name.trim(), description || '', numDiscount, start_date, end_date]
     );
     const newPromoId = promoRes.rows[0].promotion_id;
 
@@ -150,7 +196,26 @@ router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { promotion_name, description, discount_percentage, start_date, end_date, is_active, product_ids } = req.body;
 
+  if (!promotion_name || !discount_percentage || !start_date || !end_date) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลโปรโมชั่นให้ครบถ้วน' });
+  }
+
+  const numDiscount = Number(discount_percentage);
+  if (isNaN(numDiscount) || numDiscount <= 0 || numDiscount > 100) {
+    return res.status(400).json({ message: 'เปอร์เซ็นต์ส่วนลดต้องอยู่ระหว่าง 1 ถึง 100%' });
+  }
+
+  if (new Date(end_date) < new Date(start_date)) {
+    return res.status(400).json({ message: 'วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น' });
+  }
+
   try {
+    // ตรวจสอบเฉพาะ Exact Duplicate (ข้ามตัวเองที่กำลังแก้ไข)
+    const dupCheck = await checkExactDuplicate(id, promotion_name, numDiscount, start_date, end_date);
+    if (dupCheck.isDuplicate) {
+      return res.status(400).json({ message: dupCheck.message });
+    }
+
     await pool.query('BEGIN');
 
     // 1. อัปเดตข้อมูลโปรโมชั่นหลัก
@@ -158,7 +223,7 @@ router.put('/:id', async (req, res) => {
       `UPDATE promotions 
        SET promotion_name = $1, description = $2, discount_percentage = $3, start_date = $4, end_date = $5, is_active = $6
        WHERE promotion_id = $7`,
-      [promotion_name, description, discount_percentage, start_date, end_date, is_active, id]
+      [promotion_name.trim(), description || '', numDiscount, start_date, end_date, is_active, id]
     );
 
     // 2. เคลียร์รายการสินค้าเดิม แล้วใส่รายการสินค้าใหม่เข้าไปแทน
@@ -184,7 +249,6 @@ router.put('/:id', async (req, res) => {
 // ------------------------------------------------------------------------------
 // 5. PUT /api/promotions/:id/toggle
 // คำอธิบาย: สลับสถานะเปิด/ปิดโปรโมชั่น (Toggle Active/Inactive) โดยไม่ต้องเข้าหน้าแก้ไข
-// ใช้ SQL: is_active = NOT is_active
 // ------------------------------------------------------------------------------
 router.put('/:id/toggle', async (req, res) => {
   try {

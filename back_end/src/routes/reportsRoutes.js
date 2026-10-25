@@ -37,7 +37,7 @@ function buildDateCondition(range, startDate, endDate, paramStartIndex = 1, paid
   } else if (range === '30days') {
     clauses.push("order_time >= CURRENT_DATE - INTERVAL '30 days'");
   } else if (range === 'custom' && startDate && endDate) {
-    clauses.push(`order_time >= ${idx}::date AND order_time < (${idx + 1}::date + INTERVAL '1 day')`);
+    clauses.push(`order_time >= $${idx}::date AND order_time < ($${idx + 1}::date + INTERVAL '1 day')`);
     params.push(startDate, endDate);
     idx += 2;
   }
@@ -439,10 +439,10 @@ router.get('/orders', async (req, res) => {
     if (search && search.trim() !== '') {
       const searchParam = `%${search.trim()}%`;
       const searchCond = `(
-        o.order_id::text ILIKE ${currentIdx} OR 
-        (e.first_name || ' ' || e.last_name) ILIKE ${currentIdx} OR 
-        o.payment_method ILIKE ${currentIdx} OR
-        d.customer_name ILIKE ${currentIdx}
+        o.order_id::text ILIKE $${currentIdx} OR 
+        (e.first_name || ' ' || e.last_name) ILIKE $${currentIdx} OR 
+        o.payment_method ILIKE $${currentIdx} OR
+        d.customer_name ILIKE $${currentIdx}
       )`;
       whereClause = whereClause ? `${whereClause} AND ${searchCond}` : `WHERE ${searchCond}`;
       params.push(searchParam);
@@ -495,7 +495,7 @@ router.get('/orders', async (req, res) => {
       LEFT JOIN employee r ON d.rider_id = r.employee_id
       ${whereClause}
       ORDER BY o.order_time DESC
-      LIMIT ${currentIdx}
+      LIMIT $${currentIdx}
     `;
     params.push(parseInt(limit) || 100);
 

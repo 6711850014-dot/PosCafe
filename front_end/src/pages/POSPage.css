@@ -16,6 +16,22 @@
   overflow-y: auto;
 }
 
+.pos-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pos-subtitle {
+  margin: 4px 0 12px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
 .pos-header {
   display: flex;
   justify-content: space-between;
@@ -38,7 +54,7 @@
 }
 
 .pos-search input {
-  padding: 10px 15px 10px 40px; /* 🌟 ขยับ padding ด้านซ้าย (40px) เว้นที่ให้ไอคอน */
+  padding: 10px 15px 10px 40px; /* ขยับ padding ด้านซ้าย (40px) เว้นที่ให้ไอคอน */
   width: 300px;
   border: 1px solid #9ca3af;
   background-color: white; 

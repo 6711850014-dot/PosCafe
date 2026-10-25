@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProductsPage.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaImage, FaBookOpen } from 'react-icons/fa';
+import { FaPlus, FaBoxOpen, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaImage, FaBookOpen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function ProductsPage() {
@@ -49,7 +49,7 @@ function ProductsPage() {
       if (response.ok) {
         const resRecipe = await fetch(`http://localhost:5000/api/recipes/${selectedProduct.product_id}`);
         if (resRecipe.ok) setRecipeItems(await resRecipe.json());
-        setRecipeForm({ ingredient_id: '', quantity: '' }); // 🌟 เคลียร์ฟอร์ม
+        setRecipeForm({ ingredient_id: '', quantity: '' }); // เคลียร์ฟอร์ม
       } else {
         Swal.fire('แจ้งเตือน', data.message || 'เพิ่มส่วนผสมไม่ได้', 'warning');
       }
@@ -199,7 +199,10 @@ function ProductsPage() {
   return (
     <div className="prod-page-container">
       <div className="prod-header">
-        <h2>จัดการเมนูเครื่องดื่ม</h2>
+        <div>
+          <h2><FaBoxOpen /> จัดการสินค้าและเมนู (Products Management)</h2>
+          <p className="prod-subtitle">เพิ่ม แก้ไข จัดการราคา รูปภาพ และกำหนดสูตรชงตัดสต็อก (BOM)</p>
+        </div>
         <div className="prod-header-actions">
           <select className="prod-filter-select" value={selectedCategoryFilter} onChange={(e) => setSelectedCategoryFilter(e.target.value)}>
             <option value=""> ทุกหมวดหมู่ </option>

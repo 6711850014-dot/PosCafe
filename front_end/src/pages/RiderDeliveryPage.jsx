@@ -128,7 +128,7 @@ export default function RiderDeliveryPage() {
         Swal.fire({
           icon: 'success',
           title: 'เริ่มออกเดินทาง!',
-          text: 'ขับขี่ปลอดภัยนะครับ 🛵',
+          text: 'ขับขี่ปลอดภัยนะครับ',
           timer: 1500,
           showConfirmButton: false
         });
@@ -221,7 +221,7 @@ export default function RiderDeliveryPage() {
         showCancelButton: true,
         confirmButtonColor: '#10b981',
         cancelButtonColor: '#94a3b8',
-        confirmButtonText: '✅ ส่งสำเร็จแล้ว',
+        confirmButtonText: 'ส่งสำเร็จแล้ว',
         cancelButtonText: 'ยกเลิก'
       }).then(async (result) => {
         if (result.isConfirmed) {
@@ -368,7 +368,7 @@ export default function RiderDeliveryPage() {
                     <span className="task-order-ref">บิล #{task.order_id}</span>
                   </div>
                   <span className={`task-status-pill pill-${task.delivery_status.toLowerCase()}`}>
-                    {task.delivery_status === 'OUT_FOR_DELIVERY' ? '🛵 กำลังไปส่ง' : '⏳ รอเตรียมของ'}
+                    {task.delivery_status === 'OUT_FOR_DELIVERY' ? 'กำลังไปส่ง' : 'รอเตรียมของ'}
                   </span>
                 </div>
 

@@ -93,7 +93,7 @@ app.use('/api/procurements', procurementRoutes);
 
 // Health check endpoint
 app.get('/', (req, res) => {
-  res.send('✅ POS Backend is Running smoothly!');
+  res.send('POS Backend is Running smoothly!');
 });
 
 // ------------------------------------------------------------------------------
@@ -101,5 +101,5 @@ app.get('/', (req, res) => {
 // ------------------------------------------------------------------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

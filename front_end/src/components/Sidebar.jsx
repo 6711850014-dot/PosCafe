@@ -1,9 +1,10 @@
 // ==============================================================================
 // ไฟล์: front_end/src/components/Sidebar.jsx
+// ระบบ: Navigation Sidebar สำหรับ PosCafe (รองรับ Scrollable และ Collapsible)
 // ==============================================================================
 import React from "react";
 import "./Sidebar.css";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   FaCashRegister,
@@ -15,11 +16,14 @@ import {
   FaMotorcycle,
   FaTag,
   FaBoxes,
-  FaMobileAlt
+  FaMobileAlt,
+  FaCoffee,
+  FaChevronLeft,
+  FaChevronRight,
+  FaUserCircle
 } from "react-icons/fa";
 
-function Sidebar() {
-  const navigate = useNavigate();
+function Sidebar({ collapsed = false, onToggle }) {
   const location = useLocation();
 
   const handleLogoutClick = () => {
@@ -49,7 +53,6 @@ function Sidebar() {
   const allMenuItems = [
     { path: "/pos", label: "ขายหน้าร้าน", icon: <FaCashRegister />, permission: "menu_pos", fallbackRoleIds: [1, 2] }, 
     { path: "/delivery", label: "การจัดส่ง", icon: <FaMotorcycle />, permission: "menu_delivery", fallbackRoleIds: [1] },
-    // แยก permission ของไรเดอร์เป็น "menu_rider" และใช้ Role ID 3
     { path: "/rider-delivery", label: "ไรเดอร์ส่งของ", icon: <FaMobileAlt />, permission: "menu_rider", fallbackRoleIds: [1, 3] },
     { path: "/promotions", label: "จัดการโปรโมชั่น", icon: <FaTag />, permission: "menu_promotions", fallbackRoleIds: [1] },
     { path: "/procurement", label: "จัดการซื้อวัตถุดิบ", icon: <FaBoxes />, permission: "menu_procurement", fallbackRoleIds: [1] },
@@ -68,33 +71,86 @@ function Sidebar() {
   });
 
   return (
-    <nav className="sidebar">
-      <ul className="side-links">
-        {authorizedMenus.map((item) => (
-          <li
-            key={item.path}
-            className={location.pathname === item.path ? "active" : ""}
+    <nav className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+      {/* ส่วนหัวของแถบเมนู พร้อมปุ่มย่อ/ขยาย (Toggle Button) */}
+      <div className="sidebar-header">
+        {!collapsed ? (
+          <div className="sidebar-brand">
+            <FaCoffee className="brand-icon" />
+            <span className="brand-text">PosCafe</span>
+          </div>
+        ) : (
+          <div className="sidebar-brand-collapsed" title="PosCafe">
+            <FaCoffee className="brand-icon" />
+          </div>
+        )}
+        {onToggle && (
+          <button 
+            type="button" 
+            className="sidebar-toggle-btn" 
+            onClick={onToggle}
+            title={collapsed ? "ขยายแถบเมนู" : "ย่อแถบเมนู"}
           >
-            <Link to={item.path}>
-              {item.icon} {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+            {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+          </button>
+        )}
+      </div>
 
+      {/* รายการเมนูหลักที่สามารถ Scroll ขึ้น-ลงได้อย่างราบรื่น */}
+      <div className="sidebar-scrollable-body">
+        <ul className="side-links">
+          {authorizedMenus.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li
+                key={item.path}
+                className={isActive ? "active" : ""}
+                title={collapsed ? item.label : ""}
+              >
+                <Link to={item.path}>
+                  <span className="menu-icon">{item.icon}</span>
+                  {!collapsed && <span className="menu-text">{item.label}</span>}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* ส่วนข้อมูลผู้ใช้งานและปุ่มออกจากระบบด้านล่าง */}
       <div className="account-section">
-        <div className="account">
-          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>
-            {user?.name || "Guest"}
-          </div>
-          <div style={{ fontSize: '13px', opacity: 0.9 }}>
-            @{user?.username || "unknown"} | {user?.role || "ไม่ระบุตำแหน่ง"}
-          </div>
-        </div>
+        {!collapsed ? (
+          <>
+            <div className="account">
+              <div className="account-name">{user?.name || "Guest"}</div>
+              <div className="account-sub">
+                @{user?.username || "unknown"} | {user?.role || "ไม่ระบุตำแหน่ง"}
+              </div>
+            </div>
 
-        <div className="logout" onClick={handleLogoutClick}>
-          <FaSignOutAlt /> Logout
-        </div>
+            <button type="button" className="logout" onClick={handleLogoutClick}>
+              <FaSignOutAlt />
+              <span>ออกจากระบบ</span>
+            </button>
+          </>
+        ) : (
+          <div className="account-collapsed">
+            <div 
+              className="account-avatar-collapsed"
+              title={`${user?.name || "Guest"} (@${user?.username || "unknown"} - ${user?.role || "ผู้ใช้"})`}
+            >
+              <FaUserCircle />
+            </div>
+            <button 
+              type="button" 
+              className="logout-collapsed" 
+              onClick={handleLogoutClick}
+              title="ออกจากระบบ"
+            >
+              <FaSignOutAlt />
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );

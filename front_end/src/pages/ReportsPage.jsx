@@ -3,8 +3,8 @@
 // ระบบ: แดชบอร์ดรายงานยอดขายและวิเคราะห์ธุรกิจ (Sales Reporting & Data Analytics UI)
 // วัตถุประสงค์:
 //   - แสดงภาพรวมผลลัพธ์ทางธุรกิจ (KPIs): Gross Sales, Total Orders, Average Order Value (AOV)
-//   - 📋 วันนี้ขายอะไรได้บ้าง (Today's Sold Items): ดูรายการเมนูที่ขายออก จำนวนแก้ว ยอดขายรวม
-//   - 🧾 ประวัติบิลคำสั่งซื้อ (Orders History): แสดงวัน-เวลาที่ขายออกอย่างละเอียด และเปิดดูรายการในบิล
+//   - วันนี้ขายอะไรได้บ้าง (Today's Sold Items): ดูรายการเมนูที่ขายออก จำนวนแก้ว ยอดขายรวม
+//   - ประวัติบิลคำสั่งซื้อ (Orders History): แสดงวัน-เวลาที่ขายออกอย่างละเอียด และเปิดดูรายการในบิล
 //   - กราฟยอดขายรายชั่วโมง (Hourly Peak Hours) เพื่อใช้วางแผนจัดตารางงานพนักงาน
 //   - อันดับสินค้าขายดี (Top 10) และสัดส่วนการชำระเงิน (Cash vs Transfer)
 //   - การวิเคราะห์เชิงลึก (Business Analytics):
@@ -853,7 +853,7 @@ export default function ReportsPage() {
                           </td>
                           <td>
                             <span className={`payment-status-badge status-${order.payment_status?.toLowerCase() || 'paid'}`}>
-                              {order.payment_status === 'PENDING' ? '⏳ รอชำระปลายทาง' : order.payment_status === 'CANCELLED' ? '❌ ยกเลิก' : '✅ ชำระแล้ว'}
+                              {order.payment_status === 'PENDING' ? 'รอชำระปลายทาง' : order.payment_status === 'CANCELLED' ? 'ยกเลิก' : 'ชำระแล้ว'}
                             </span>
                           </td>
                           <td>
@@ -1081,7 +1081,7 @@ export default function ReportsPage() {
               <div className="receipt-meta-item col-span-2">
                 <span className="meta-label">สถานะการชำระเงิน:</span>
                 <span className={`payment-status-badge status-${selectedOrderModal.payment_status?.toLowerCase() || 'paid'}`} style={{ display: 'inline-block', width: 'fit-content' }}>
-                  {selectedOrderModal.payment_status === 'PENDING' ? '⏳ รอชำระเงินปลายทาง (ยังไม่คิดยอดขายจนกว่าไรเดอร์จะส่งและรับเงิน)' : selectedOrderModal.payment_status === 'CANCELLED' ? '❌ ยกเลิกคำสั่งซื้อ' : '✅ ชำระเงินเรียบร้อยแล้ว'}
+                  {selectedOrderModal.payment_status === 'PENDING' ? 'รอชำระเงินปลายทาง (ยังไม่คิดยอดขายจนกว่าไรเดอร์จะส่งและรับเงิน)' : selectedOrderModal.payment_status === 'CANCELLED' ? 'ยกเลิกคำสั่งซื้อ' : 'ชำระเงินเรียบร้อยแล้ว'}
                 </span>
               </div>
             </div>

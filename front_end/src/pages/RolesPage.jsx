@@ -249,7 +249,7 @@ function RolesPage() {
       {/* ส่วนหัวหน้าจอจัดการสิทธิ์ */}
       <div className="roles-header">
         <div>
-          <h2>จัดการสิทธิ์และบทบาท (Roles & Permissions)</h2>
+          <h2><FaShieldAlt /> จัดการสิทธิ์และบทบาท (Roles & Permissions)</h2>
           <p className="roles-subtitle">
             กำหนดบทบาทและสิทธิ์การเข้าถึงเมนู เพื่อความปลอดภัยและการบริหารงานที่มีประสิทธิภาพ
           </p>

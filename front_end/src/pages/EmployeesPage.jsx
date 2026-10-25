@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './EmployeesPage.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaEye, FaEyeSlash, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaPlus, FaUsers, FaEdit, FaTrash, FaTimes, FaEye, FaEyeSlash, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function EmployeesPage() {
@@ -225,7 +225,10 @@ function EmployeesPage() {
     <div className="page-container">
       {/* ส่วนหัวของหน้าจอพนักงาน */}
       <div className="page-header">
-        <h2>จัดการพนักงาน</h2>
+        <div>
+          <h2><FaUsers /> จัดการพนักงาน (Employees Management)</h2>
+          <p className="page-subtitle">จัดการข้อมูลพนักงาน กำหนดตำแหน่ง และบัญชีผู้ใช้งานระบบ</p>
+        </div>
         <div className="header-actions">
           <div className="search-box">
             <FaSearch className="search-icon" />

@@ -1,18 +1,116 @@
+/* ==============================================================================
+   ไฟล์: front_end/src/components/Sidebar.css
+   สไตล์: Sidebar Navigation (Scrollable, Collapsible & Flexible)
+   ============================================================================== */
+
 .sidebar {
-  width: 220px;
-  height: 100%;
+  width: 230px;
+  height: 100vh;
+  max-height: 100vh;
   background-color: #ffffff;
-  color: rgb(255, 255, 255);
+  color: #1e293b;
   position: fixed;
   top: 0;
   left: 0;
-  padding: 20px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #e2e8f0;
+  z-index: 1000;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
+/* สถานะย่อแถบเมนู (Collapsed) */
+.sidebar.collapsed {
+  width: 72px;
+}
+
+/* ================= ส่วนหัวแถบเมนู ================= */
+.sidebar-header {
+  padding: 16px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: 60px;
+  box-sizing: border-box;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 6px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.sidebar-brand-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0284c7;
+  font-size: 20px;
+}
+
+.brand-icon {
+  font-size: 22px;
+  color: #0284c7;
+}
+
+.sidebar-toggle-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+/* ================= ส่วนเนื้อหาเมนูที่เลื่อนได้ (Scrollable Body) ================= */
+.sidebar-scrollable-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0;
+  min-height: 0; /* สำคัญมากเพื่อให้ flex child เกิด scrollbar เมื่อจอเล็กหรือซูม */
+}
+
+/* ตกแต่ง Scrollbar ให้เรียบหรูและเลื่อนได้คล่อง */
+.sidebar-scrollable-body::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar-scrollable-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scrollable-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.sidebar-scrollable-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 
 .side-links {
   list-style: none;
@@ -23,79 +121,178 @@
 .side-links li {
   padding: 0;
   border-radius: 8px;
-  margin: 11px 16px;
+  margin: 4px 10px;
+  transition: all 0.15s ease;
+}
+
+.sidebar.collapsed .side-links li {
+  margin: 4px 8px;
+}
+
+.side-links li a {
+  padding: 10px 14px;
+  color: #334155;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .side-links li a {
+  justify-content: center;
+  padding: 12px 0;
+  gap: 0;
+}
+
+.menu-icon {
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.sidebar.collapsed .menu-icon {
+  font-size: 20px;
+}
+
+.menu-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .side-links li:hover {
-  background-color: #1fc0e9;
-  border-radius: 8px;
-  
-
-
+  background-color: #f0f9ff;
 }
+
+.side-links li:hover a {
+  color: #0284c7;
+}
+
+.side-links li:hover .menu-icon {
+  color: #0284c7;
+}
+
+/* เมนูที่กำลังเปิดอยู่ (Active Item) */
 .side-links li.active {
-  background-color: #1fc0e9;
-  border-radius: 8px;
+  background-color: #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
 }
+
 .side-links li.active a {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.side-links li.active .menu-icon {
   color: #ffffff;
 }
 
-
-
-.side-links li a {
-  padding: 15px 40px; /* ย้ายมาใส่ตรงนี้แทน */
-  color: rgb(0, 0, 0);
-  text-decoration: none;
-  
-  /* เปลี่ยนเป็น flex เพื่อให้ไอคอนกับตัวหนังสือเรียงสวยๆ */
-  display: flex; 
-  align-items: center; 
-  gap: 12px; /* ระยะห่างระหว่างไอคอนกับตัวหนังสือ */
-  
-  border-radius: 8px; /* เผื่อไว้ให้ขอบโค้งเนียนไปกับกล่อง */
-  width: 100%;
+/* ================= ส่วนข้อมูลผู้ใช้และ Logout (Bottom Section) ================= */
+.account-section {
+  border-top: 1px solid #f1f5f9;
+  padding: 12px 10px;
+  background-color: #ffffff;
   box-sizing: border-box;
 }
 
-.side-links li a:hover {
-  color: #ffffff;  
+.sidebar.collapsed .account-section {
+  padding: 10px 6px;
 }
 
-
-
-
 .account {
-  padding: 16px;
-  font-size: 14px;
-  color: #ffffff;
-  background-color: #1fc0e9;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #0369a1;
+  background-color: #e0f2fe;
   border-radius: 8px;
-  margin: 11px 16px;
+  margin-bottom: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.account-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #0369a1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-sub {
+  font-size: 11px;
+  color: #0284c7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 .logout {
-  padding: 15px 40px;
+  width: 100%;
+  padding: 9px 14px;
   border-radius: 8px;
-  color: #000000;
+  color: #64748b;
+  background-color: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
-  font-weight: bold;
-  margin-top: 15px;
-  margin-bottom: 30px;
-  margin-left: 16px;
-  margin-right: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .logout:hover {
-  color: #ffffff;
-  background-color: #e74c3c;
-  border-radius: 8px;
+  color: #ef4444;
+  background-color: #fef2f2;
+  border-color: #fecaca;
 }
 
+/* บัญชีและ Logout เมื่อย่อแถบเมนู */
+.account-collapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 
+.account-avatar-collapsed {
+  font-size: 24px;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+}
 
+.logout-collapsed {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
 
-
-
-
-
+.logout-collapsed:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}

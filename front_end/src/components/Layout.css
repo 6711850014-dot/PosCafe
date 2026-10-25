@@ -1,0 +1,47 @@
+/* ==============================================================================
+   ไฟล์: front_end/src/components/Layout.css
+   สไตล์: Flexible Responsive Layout สำหรับระบบ PosCafe
+   ============================================================================== */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f1f5f9;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* พื้นที่แสดงผลเนื้อหาหลัก (Responsive Main Area) */
+.app-main-content {
+  margin-left: 230px;
+  padding: 20px;
+  flex: 1;
+  min-width: 0; /* ป้องกัน Flexbox child ทะลุขอบเมื่อตารางหรือการ์ดมีขนาดกว้าง */
+  width: calc(100% - 230px);
+  box-sizing: border-box;
+  transition: margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* เมื่อยุบแถบเมนู (Sidebar Collapsed) ให้เนื้อหาขยายเต็มพื้นที่อัตโนมัติ */
+.app-layout.sidebar-collapsed .app-main-content {
+  margin-left: 72px;
+  width: calc(100% - 72px);
+}
+
+/* ปรับความยืดหยุ่นสำหรับหน้าจอขนาดเล็ก หรือเมื่อผู้ใช้ซูมจอเข้า (Zoom-in) */
+@media (max-width: 992px) {
+  .app-main-content {
+    margin-left: 72px;
+    width: calc(100% - 72px);
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
+}

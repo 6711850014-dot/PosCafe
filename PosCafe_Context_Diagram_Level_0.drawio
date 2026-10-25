@@ -1,0 +1,170 @@
+<mxfile host="app.diagrams.net" modified="2026-10-25T07:40:00.000Z" agent="Antigravity" version="24.0.0" type="device">
+  <diagram id="context-diagram-0" name="Context Diagram Level 0 - PosCafe">
+    <mxGraphModel dx="1600" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1050" background="#F8FAFC" math="0" shadow="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title Banner -->
+        <mxCell id="title" value="&lt;b style=&quot;font-size: 22px; color: #1E293B;&quot;&gt;CONTEXT DIAGRAM (LEVEL 0)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 14px; color: #64748B;&quot;&gt;ระบบบริหารจัดการร้านกาแฟและบริการจัดส่ง (PosCafe System)&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="510" y="25" width="580" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- System Process (Level 0) -->
+        <mxCell id="process_system" value="&lt;div style=&quot;font-size: 18px; font-weight: bold; color: #1E3A8A;&quot;&gt;0&lt;/div&gt;&lt;hr style=&quot;border: 1px solid #3B82F6; margin: 4px 0;&quot;/&gt;&lt;div style=&quot;font-size: 16px; font-weight: bold; color: #1E293B;&quot;&gt;ระบบบริหารจัดการ&lt;br/&gt;ร้านกาแฟ PosCafe&lt;/div&gt;&lt;div style=&quot;font-size: 12px; color: #475569; margin-top: 4px;&quot;&gt;(PosCafe System)&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=3;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="670" y="380" width="260" height="260" as="geometry" />
+        </mxCell>
+
+        <!-- ================= EXTERNAL ENTITIES ================= -->
+
+        <!-- 1. Customer (ลูกค้า) - Top -->
+        <mxCell id="entity_customer" value="&lt;b style=&quot;font-size: 15px; color: #065F46;&quot;&gt;Customer&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #047857;&quot;&gt;(ลูกค้า)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1FAE5;strokeColor=#059669;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="110" width="220" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- 2. Cashier / Staff (พนักงานหน้าร้าน / แคชเชียร์) - Left -->
+        <mxCell id="entity_staff" value="&lt;b style=&quot;font-size: 15px; color: #9A3412;&quot;&gt;Cashier / Staff&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #C2410C;&quot;&gt;(พนักงานขาย / แคชเชียร์)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="472.5" width="230" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- 3. Rider (พนักงานส่งของ / ไรเดอร์) - Bottom Left -->
+        <mxCell id="entity_rider" value="&lt;b style=&quot;font-size: 15px; color: #991B1B;&quot;&gt;Delivery Rider&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #DC2626;&quot;&gt;(พนักงานส่งของ / ไรเดอร์)&lt;/span&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 11px; color: #7F1D1D;&quot;&gt;[Mobile 4G/5G via Tunnel]&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="800" width="230" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- 4. Store Manager / Admin (ผู้จัดการร้าน / ผู้ดูแลระบบ) - Right -->
+        <mxCell id="entity_manager" value="&lt;b style=&quot;font-size: 15px; color: #581C87;&quot;&gt;Store Manager / Admin&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #7E22CE;&quot;&gt;(ผู้จัดการร้าน / ผู้ดูแลระบบ)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="472.5" width="230" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- 5. Supplier (ผู้จำหน่ายวัตถุดิบ) - Bottom Right -->
+        <mxCell id="entity_supplier" value="&lt;b style=&quot;font-size: 15px; color: #854D0E;&quot;&gt;Material Supplier&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #A16207;&quot;&gt;(ผู้จัดจำหน่ายวัตถุดิบ)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF9C3;strokeColor=#CA8A04;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="805" width="230" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- ================= DATA FLOWS ================= -->
+
+        <!-- 1. Customer <-> System -->
+        <!-- Customer -> System -->
+        <mxCell id="flow_cust_in" value="1. รายการสั่งซื้อ (Dine-in / Takeaway / Delivery)&lt;br/&gt;2. ข้อมูลผู้รับและที่อยู่จัดส่ง&lt;br/&gt;3. การชำระเงิน (เงินสด / โอนเงิน / เก็บเงินปลายทาง)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;fontSize=11;fontColor=#065F46;align=right;" edge="1" parent="1" source="entity_customer" target="process_system">
+          <mxGeometry x="-0.15" y="-15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="270" />
+              <mxPoint x="750" y="270" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- System -> Customer -->
+        <mxCell id="flow_cust_out" value="1. ใบเสร็จรับเงิน (Receipt)&lt;br/&gt;2. ข้อมูลเมนูและโปรโมชั่นส่วนลด&lt;br/&gt;3. เครื่องดื่ม/สินค้าที่สั่งซื้อ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;align=left;" edge="1" parent="1" source="process_system" target="entity_customer">
+          <mxGeometry x="-0.1" y="15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="270" />
+              <mxPoint x="850" y="270" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 2. Staff <-> System -->
+        <!-- Staff -> System -->
+        <mxCell id="flow_staff_in" value="1. เข้าสู่ระบบ (Authentication)&lt;br/&gt;2. บันทึกคำสั่งซื้อ (POS Checkout)&lt;br/&gt;3. บันทึกยอดเงินรับและเงินทอน&lt;br/&gt;4. มอบหมายงานไรเดอร์จัดส่ง" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EA580C;strokeWidth=2;fontSize=11;fontColor=#9A3412;align=center;" edge="1" parent="1" source="entity_staff" target="process_system">
+          <mxGeometry x="-0.05" y="-20" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="475" />
+              <mxPoint x="500" y="475" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- System -> Staff -->
+        <mxCell id="flow_staff_out" value="1. สิทธิ์การใช้งานเมนู (RBAC Permissions)&lt;br/&gt;2. ข้อมูลสินค้า, ราคา และส่วนลดโปรโมชั่น&lt;br/&gt;3. แจ้งเตือนสต็อกวัตถุดิบ / ตัดสต็อก FIFO&lt;br/&gt;4. สรุปยอดขายบิลและเงินทอน" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;align=center;" edge="1" parent="1" source="process_system" target="entity_staff">
+          <mxGeometry x="-0.05" y="25" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="555" />
+              <mxPoint x="500" y="555" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 3. Rider <-> System -->
+        <!-- Rider -> System -->
+        <mxCell id="flow_rider_in" value="1. เข้าสู่ระบบไรเดอร์ผ่านมือถือ&lt;br/&gt;2. อัปเดตสถานะจัดส่ง (รับออเดอร์/กำลังไปส่ง/ส่งสำเร็จ)&lt;br/&gt;3. ยืนยันการรับเงินปลายทาง (COD Collected)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=2;fontSize=11;fontColor=#991B1B;align=right;" edge="1" parent="1" source="entity_rider" target="process_system">
+          <mxGeometry x="0.25" y="-25" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="335" y="730" />
+              <mxPoint x="700" y="730" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- System -> Rider -->
+        <mxCell id="flow_rider_out" value="1. รายการงานจัดส่งที่ได้รับมอบหมาย&lt;br/&gt;2. ข้อมูลลูกค้า: ชื่อ, เบอร์โทร, ที่อยู่จัดส่ง&lt;br/&gt;3. รายการสินค้าและยอดเงินที่ต้องเก็บ (COD)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;align=left;" edge="1" parent="1" source="process_system" target="entity_rider">
+          <mxGeometry x="-0.3" y="25" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="770" />
+              <mxPoint x="390" y="770" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 4. Manager / Admin <-> System -->
+        <!-- Manager -> System -->
+        <mxCell id="flow_mgr_in" value="1. จัดการข้อมูลพนักงานและตำแหน่ง (Roles &amp; Permissions)&lt;br/&gt;2. จัดการข้อมูลสินค้าและหมวดหมู่&lt;br/&gt;3. กำหนดสูตรชง/สูตรตัดสต็อก (Recipe / BOM)&lt;br/&gt;4. จัดการโปรโมชั่นส่วนลด (% Promotions)&lt;br/&gt;5. บันทึกตรวจรับการจัดซื้อวัตถุดิบ (Procurement)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;align=center;" edge="1" parent="1" source="entity_manager" target="process_system">
+          <mxGeometry x="-0.05" y="-30" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="475" />
+              <mxPoint x="1100" y="475" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- System -> Manager -->
+        <mxCell id="flow_mgr_out" value="1. รายงานสรุปยอดขายตามช่วงเวลา&lt;br/&gt;2. รายงานวิเคราะห์ Market Basket Analysis&lt;br/&gt;3. รายงานวิเคราะห์สินค้ากลุ่ม ABC (Pareto 80/20)&lt;br/&gt;4. รายงานสต็อกคงเหลือและประวัติล็อต FIFO&lt;br/&gt;5. สรุปประวัติการจัดซื้อและต้นทุนวัตถุดิบ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;align=center;" edge="1" parent="1" source="process_system" target="entity_manager">
+          <mxGeometry x="-0.05" y="30" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="555" />
+              <mxPoint x="1100" y="555" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 5. Supplier <-> System -->
+        <!-- Supplier -> System -->
+        <mxCell id="flow_supp_in" value="1. ข้อมูลใบแจ้งหนี้ / ใบส่งสินค้า (Invoice/Receipt)&lt;br/&gt;2. ข้อมูลวัตถุดิบ: ราคาต่อหน่วย, ล็อต, วันหมดอายุ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#CA8A04;strokeWidth=2;fontSize=11;fontColor=#854D0E;align=left;" edge="1" parent="1" source="entity_supplier" target="process_system">
+          <mxGeometry x="0.25" y="-20" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1265" y="730" />
+              <mxPoint x="900" y="730" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- System -> Supplier -->
+        <mxCell id="flow_supp_out" value="1. ข้อมูลการสั่งซื้อวัตถุดิบ (Procurement Request)&lt;br/&gt;2. ข้อมูลการชำระเงินค่าวัตถุดิบ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;align=right;" edge="1" parent="1" source="process_system" target="entity_supplier">
+          <mxGeometry x="-0.3" y="20" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="770" />
+              <mxPoint x="1200" y="770" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================= SYSTEM METADATA BOX ================= -->
+        <mxCell id="info_box" value="&lt;b&gt;Tech Stack &amp;amp; Architecture Summary:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;Backend:&lt;/b&gt; Node.js + Express.js (REST API)&lt;br/&gt;• &lt;b&gt;Database:&lt;/b&gt; PostgreSQL (Supabase) with Transaction FIFO Stock Deduction&lt;br/&gt;• &lt;b&gt;Frontend:&lt;/b&gt; React (Vite) + SweetAlert2 + React Icons&lt;br/&gt;• &lt;b&gt;Mobile Tunnel:&lt;/b&gt; Cloudflare Tunnel (cloudflared.exe) สำหรับ Rider Mobile 4G/5G" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;strokeWidth=1;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="930" width="440" height="85" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

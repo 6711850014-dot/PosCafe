@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './StockPage.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaPlusCircle, FaList, FaExclamationTriangle } from 'react-icons/fa';
+import { FaPlus, FaWarehouse, FaEdit, FaTrash, FaTimes, FaSearch, FaChevronLeft, FaChevronRight, FaPlusCircle, FaList, FaExclamationTriangle } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function StockPage() {
@@ -180,7 +180,10 @@ function StockPage() {
   return (
     <div className="prod-page-container">
       <div className="prod-header">
-        <h2>จัดการสต็อกวัตถุดิบ (Inventory)</h2>
+        <div>
+          <h2><FaWarehouse /> จัดการสต็อกวัตถุดิบ (Stock & Inventory)</h2>
+          <p className="prod-subtitle">ตรวจสอบสต็อกคงเหลือ จัดการล็อตวัตถุดิบ FIFO และแจ้งเตือนวัตถุดิบใกล้หมด</p>
+        </div>
         <div className="prod-header-actions">
           <div className="prod-search-box">
             <FaSearch className="prod-search-icon" />
