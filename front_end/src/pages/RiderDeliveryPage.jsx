@@ -70,7 +70,7 @@ export default function RiderDeliveryPage() {
       fetchRiderTasks(userObj.employee_id);
     } else {
       // ถ้าไม่มี session ให้เตะกลับไปหน้าล็อกอินแบบไม่ให้กดย้อนกลับ
-      navigate('/login', { replace: true });
+      navigate('/login?redirect=/rider-delivery', { replace: true });
     }
   }, [navigate]);
 
@@ -109,7 +109,7 @@ export default function RiderDeliveryPage() {
       if (result.isConfirmed) {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("user");
-        navigate('/login', { replace: true }); 
+        navigate('/login?redirect=/rider-delivery', { replace: true }); 
       }
     });
   };

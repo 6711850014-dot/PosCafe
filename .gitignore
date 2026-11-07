@@ -21,3 +21,9 @@ Thumbs.db
 
 # Environment variables (Optional - keep local)
 # back_end/.env
+
+# Temporary and backup files
+*.bak
+*.original_backup
+*AutoRecovered*
+~$*

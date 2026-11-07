@@ -5,9 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true, // เปิดให้เครื่องภายนอกเข้าถึงได้
+    allowedHosts: true, // อนุญาตให้เชื่อมต่อผ่าน Cloudflare Tunnel ทุกโดเมน
     proxy: {
       "/api": {
-        target: "http://localhost:5000", // ส่งคำขอ /api ไปยัง Backend ในคอมพิวเตอร์
+        target: "http://localhost:5000", // ส่งคำขอ /api ไปยัง Backend
         changeOrigin: true,
       },
       "/uploads": {

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>PosCafe Complete ER Diagram</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1750px;
+      height: 1250px;
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+    svg {
+      display: block;
+      width: 1750px;
+      height: 1250px;
+    }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1750 1250" width="1750" height="1250" style="background-color: #ffffff; font-family: 'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <!-- Draw.io Grid Pattern -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f2f5" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+
+  <!-- Attribute Lines & Ovals -->
+  <g id="attributes">
+
+    <line x1="170" y1="190" x2="120" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="120" cy="90" rx="46" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="120" y="94" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">role_id</tspan></text>
+    <line x1="170" y1="190" x2="220" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="220" cy="90" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="220" y="94" font-size="11.5" fill="#000000" text-anchor="middle">role_name</text>
+    <line x1="410" y1="190" x2="370" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="370" cy="90" rx="65" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="370" y="94" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">employee_id</tspan></text>
+    <line x1="410" y1="190" x2="460" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="460" cy="90" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="460" y="94" font-size="11.5" fill="#000000" text-anchor="middle">username</text>
+    <line x1="410" y1="190" x2="520" y2="145" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="520" cy="145" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="520" y="149" font-size="11.5" fill="#000000" text-anchor="middle">password</text>
+    <line x1="410" y1="190" x2="525" y2="210" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="525" cy="210" rx="61" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="525" y="214" font-size="11.5" fill="#000000" text-anchor="middle">first_name</text>
+    <line x1="410" y1="190" x2="520" y2="270" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="520" cy="270" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="520" y="274" font-size="11.5" fill="#000000" text-anchor="middle">last_name</text>
+    <line x1="410" y1="190" x2="520" y2="330" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="520" cy="330" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="520" y="334" font-size="11.5" fill="#000000" text-anchor="middle">phone</text>
+    <line x1="410" y1="190" x2="520" y2="390" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="520" cy="390" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="520" y="394" font-size="11.5" fill="#000000" text-anchor="middle">is_active</text>
+    <line x1="770" y1="190" x2="685" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="685" cy="90" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="685" y="94" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">order_id</tspan></text>
+    <line x1="770" y1="190" x2="780" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="780" cy="90" rx="61" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="780" y="94" font-size="11.5" fill="#000000" text-anchor="middle">order_time</text>
+    <line x1="770" y1="190" x2="880" y2="90" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="880" cy="90" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="880" y="94" font-size="11.5" fill="#000000" text-anchor="middle">total_amount</text>
+    <line x1="770" y1="190" x2="885" y2="155" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="885" cy="155" rx="80" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="885" y="159" font-size="11.5" fill="#000000" text-anchor="middle">payment_method</text>
+    <line x1="770" y1="190" x2="885" y2="215" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="885" cy="215" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="885" y="219" font-size="11.5" fill="#000000" text-anchor="middle">amount_received</text>
+    <line x1="770" y1="190" x2="885" y2="275" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="885" cy="275" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="885" y="279" font-size="11.5" fill="#000000" text-anchor="middle">change_amount</text>
+    <line x1="770" y1="400" x2="880" y2="355" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="880" cy="355" rx="46" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="880" y="359" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">item_id</tspan></text>
+    <line x1="770" y1="400" x2="880" y2="415" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="880" cy="415" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="880" y="419" font-size="11.5" fill="#000000" text-anchor="middle">quantity</text>
+    <line x1="770" y1="400" x2="880" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="880" cy="475" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="880" y="479" font-size="11.5" fill="#000000" text-anchor="middle">price</text>
+    <line x1="170" y1="500" x2="120" y2="415" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="120" cy="415" rx="65" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="120" y="419" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">category_id</tspan></text>
+    <line x1="170" y1="500" x2="230" y2="415" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="230" cy="415" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="230" y="419" font-size="11.5" fill="#000000" text-anchor="middle">category_name</text>
+    <line x1="410" y1="500" x2="380" y2="415" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="380" cy="415" rx="61" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="380" y="419" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">product_id</tspan></text>
+    <line x1="410" y1="500" x2="530" y2="560" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="530" cy="560" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="530" y="564" font-size="11.5" fill="#000000" text-anchor="middle">product_name</text>
+    <line x1="410" y1="500" x2="530" y2="620" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="530" cy="620" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="530" y="624" font-size="11.5" fill="#000000" text-anchor="middle">price</text>
+    <line x1="410" y1="500" x2="440" y2="640" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="440" cy="640" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="440" y="644" font-size="11.5" fill="#000000" text-anchor="middle">image_url</text>
+    <line x1="410" y1="500" x2="340" y2="630" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="340" cy="630" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="340" y="634" font-size="11.5" fill="#000000" text-anchor="middle">is_available</text>
+    <line x1="770" y1="610" x2="695" y2="705" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="695" cy="705" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="695" y="709" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">recipe_id</tspan></text>
+    <line x1="770" y1="610" x2="815" y2="705" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="815" cy="705" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="815" y="709" font-size="11.5" fill="#000000" text-anchor="middle">quantity</text>
+    <line x1="1030" y1="610" x2="1010" y2="485" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1010" cy="485" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1010" y="489" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">ingredient_id</tspan></text>
+    <line x1="1030" y1="610" x2="1125" y2="485" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1125" cy="485" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1125" y="489" font-size="11.5" fill="#000000" text-anchor="middle">ingredient_name</text>
+    <line x1="1030" y1="610" x2="1135" y2="560" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1135" cy="560" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1135" y="564" font-size="11.5" fill="#000000" text-anchor="middle">unit</text>
+    <line x1="1030" y1="610" x2="1135" y2="635" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1135" cy="635" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1135" y="639" font-size="11.5" fill="#000000" text-anchor="middle">min_quantity</text>
+    <line x1="1030" y1="840" x2="1145" y2="840" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1145" cy="840" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1145" y="844" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">inventory_id</tspan></text>
+    <line x1="1030" y1="840" x2="1145" y2="910" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1145" cy="910" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1145" y="914" font-size="11.5" fill="#000000" text-anchor="middle">quantity</text>
+    <line x1="1030" y1="840" x2="1055" y2="950" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1055" cy="950" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1055" y="954" font-size="11.5" fill="#000000" text-anchor="middle">purchase_date</text>
+    <line x1="1030" y1="840" x2="950" y2="950" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="950" cy="950" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="950" y="954" font-size="11.5" fill="#000000" text-anchor="middle">expiration_date</text>
+    <line x1="170" y1="830" x2="115" y2="740" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="115" cy="740" rx="65" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="115" y="744" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">delivery_id</tspan></text>
+    <line x1="170" y1="830" x2="225" y2="740" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="225" cy="740" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="225" y="744" font-size="11.5" fill="#000000" text-anchor="middle">customer_name</text>
+    <line x1="170" y1="830" x2="60" y2="800" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="60" cy="800" rx="80" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="60" y="804" font-size="11.5" fill="#000000" text-anchor="middle">customer_phone</text>
+    <line x1="170" y1="830" x2="60" y2="865" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="60" cy="865" rx="90" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="60" y="869" font-size="11.5" fill="#000000" text-anchor="middle">delivery_address</text>
+    <line x1="170" y1="830" x2="65" y2="925" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="65" cy="925" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="65" y="929" font-size="11.5" fill="#000000" text-anchor="middle">delivery_fee</text>
+    <line x1="170" y1="830" x2="155" y2="945" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="155" cy="945" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="155" y="949" font-size="11.5" fill="#000000" text-anchor="middle">delivery_status</text>
+    <line x1="170" y1="830" x2="235" y2="945" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="235" cy="945" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="235" y="949" font-size="11.5" fill="#000000" text-anchor="middle">notes</text>
+    <line x1="170" y1="830" x2="290" y2="890" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="290" cy="890" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="290" y="894" font-size="11.5" fill="#000000" text-anchor="middle">delivered_at</text>
+    <line x1="450" y1="780" x2="350" y2="780" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="350" cy="780" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="350" y="784" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">id</tspan></text>
+    <line x1="450" y1="990" x2="340" y2="925" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="340" cy="925" rx="70" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="340" y="929" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">promotion_id</tspan></text>
+    <line x1="450" y1="990" x2="450" y2="905" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="450" cy="905" rx="80" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="450" y="909" font-size="11.5" fill="#000000" text-anchor="middle">promotion_name</text>
+    <line x1="450" y1="990" x2="565" y2="925" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="565" cy="925" rx="65" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="565" y="929" font-size="11.5" fill="#000000" text-anchor="middle">description</text>
+    <line x1="450" y1="990" x2="585" y2="990" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="585" cy="990" rx="105" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="585" y="994" font-size="11.5" fill="#000000" text-anchor="middle">discount_percentage</text>
+    <line x1="450" y1="990" x2="580" y2="1055" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="580" cy="1055" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="580" y="1059" font-size="11.5" fill="#000000" text-anchor="middle">discount_amount</text>
+    <line x1="450" y1="990" x2="505" y2="1080" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="505" cy="1080" rx="61" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="505" y="1084" font-size="11.5" fill="#000000" text-anchor="middle">start_date</text>
+    <line x1="450" y1="990" x2="420" y2="1080" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="420" cy="1080" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="420" y="1084" font-size="11.5" fill="#000000" text-anchor="middle">end_date</text>
+    <line x1="450" y1="990" x2="340" y2="1040" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="340" cy="1040" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="340" y="1044" font-size="11.5" fill="#000000" text-anchor="middle">is_active</text>
+    <line x1="1390" y1="610" x2="1305" y2="515" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1305" cy="515" rx="80" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1305" y="519" font-size="11.5" fill="#000000" text-anchor="middle"><tspan text-decoration="underline">procurement_id</tspan></text>
+    <line x1="1390" y1="610" x2="1400" y2="505" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1400" cy="505" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1400" y="509" font-size="11.5" fill="#000000" text-anchor="middle">supplier_name</text>
+    <line x1="1390" y1="610" x2="1485" y2="515" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1485" cy="515" rx="51" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1485" y="519" font-size="11.5" fill="#000000" text-anchor="middle">quantity</text>
+    <line x1="1390" y1="610" x2="1515" y2="570" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1515" cy="570" rx="56" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1515" y="574" font-size="11.5" fill="#000000" text-anchor="middle">unit_cost</text>
+    <line x1="1390" y1="610" x2="1515" y2="630" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1515" cy="630" rx="61" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1515" y="634" font-size="11.5" fill="#000000" text-anchor="middle">total_cost</text>
+    <line x1="1390" y1="610" x2="1515" y2="690" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1515" cy="690" rx="75" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1515" y="694" font-size="11.5" fill="#000000" text-anchor="middle">purchase_date</text>
+    <line x1="1390" y1="610" x2="1460" y2="725" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1460" cy="725" rx="85" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1460" y="729" font-size="11.5" fill="#000000" text-anchor="middle">expiration_date</text>
+    <line x1="1390" y1="610" x2="1370" y2="725" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1370" cy="725" rx="80" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1370" y="729" font-size="11.5" fill="#000000" text-anchor="middle">invoice_number</text>
+    <line x1="1390" y1="610" x2="1295" y2="690" stroke="#000000" stroke-width="1.2"/>
+    <ellipse cx="1295" cy="690" rx="40" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="1295" y="694" font-size="11.5" fill="#000000" text-anchor="middle">notes</text>
+  </g>
+
+  <!-- Relationships -->
+  <g id="relationships">
+
+    <line x1="215" y1="190" x2="275" y2="190" stroke="#000000" stroke-width="1.2"/>
+    <line x1="305" y1="190" x2="362" y2="190" stroke="#000000" stroke-width="1.2"/>
+    <text x="230" y="180" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="345" y="180" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="290,178 305,190 290,202 275,190" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="290,180.5 302.5,190 290,199.5 277.5,190" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="290" y="194" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="458" y1="190" x2="575" y2="190" stroke="#000000" stroke-width="1.2"/>
+    <line x1="605" y1="190" x2="722" y2="190" stroke="#000000" stroke-width="1.2"/>
+    <text x="480" y="180" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="700" y="180" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="590,178 605,190 590,202 575,190" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="590,180.5 602.5,190 590,199.5 577.5,190" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="590" y="194" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="218" y1="500" x2="275" y2="500" stroke="#000000" stroke-width="1.2"/>
+    <line x1="305" y1="500" x2="362" y2="500" stroke="#000000" stroke-width="1.2"/>
+    <text x="230" y="490" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="345" y="490" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="290,488 305,500 290,512 275,500" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="290,490.5 302.5,500 290,509.5 277.5,500" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="290" y="504" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="770" y1="208" x2="770" y2="280" stroke="#000000" stroke-width="1.2"/>
+    <line x1="770" y1="310" x2="770" y2="382" stroke="#000000" stroke-width="1.2"/>
+    <text x="782" y="235" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="782" y="360" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="770,283 785,295 770,307 755,295" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="770,285.5 782.5,295 770,304.5 757.5,295" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="770" y="299" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <polyline points="428,482 428,450 655,450 655,415" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <line x1="670" y1="400" x2="717" y2="400" stroke="#000000" stroke-width="1.2"/>
+    <text x="438" y="445" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="700" y="390" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="655,388 670,400 655,412 640,400" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="655,390.5 667.5,400 655,409.5 642.5,400" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="655" y="404" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <polyline points="458,500 540,500 540,610 595,610" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <line x1="625" y1="610" x2="712" y2="610" stroke="#000000" stroke-width="1.2"/>
+    <text x="480" y="490" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="695" y="600" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="610,598 625,610 610,622 595,610" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="610,600.5 622.5,610 610,619.5 597.5,610" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="610" y="614" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="982" y1="610" x2="935" y2="610" stroke="#000000" stroke-width="1.2"/>
+    <line x1="905" y1="610" x2="828" y2="610" stroke="#000000" stroke-width="1.2"/>
+    <text x="965" y="600" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="845" y="600" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="920,598 935,610 920,622 905,610" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="920,600.5 932.5,610 920,619.5 907.5,610" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="920" y="614" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="1030" y1="628" x2="1030" y2="710" stroke="#000000" stroke-width="1.2"/>
+    <line x1="1030" y1="740" x2="1030" y2="822" stroke="#000000" stroke-width="1.2"/>
+    <text x="1042" y="665" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="1042" y="795" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="1030,713 1045,725 1030,737 1015,725" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="1030,715.5 1042.5,725 1030,734.5 1017.5,725" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="1030" y="729" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="1078" y1="610" x2="1195" y2="610" stroke="#000000" stroke-width="1.2"/>
+    <line x1="1225" y1="610" x2="1317" y2="610" stroke="#000000" stroke-width="1.2"/>
+    <text x="1105" y="600" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="1295" y="600" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="1210,598 1225,610 1210,622 1195,610" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="1210,600.5 1222.5,610 1210,619.5 1197.5,610" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="1210" y="614" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <polyline points="380,208 290,320 290,645" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <polyline points="290,675 290,830 218,830" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <text x="360" y="240" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="240" y="820" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="290,648 305,660 290,672 275,660" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="290,650.5 302.5,660 290,669.5 277.5,660" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="290" y="664" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <polyline points="745,208 745,260 45,260 45,715 155,715" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <line x1="170" y1="730" x2="170" y2="812" stroke="#000000" stroke-width="1.2"/>
+    <text x="755" y="245" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="182" y="795" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <!-- Diamond -->
+    <polygon points="170,703 185,715 170,727 155,715" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="170,705.5 182.5,715 170,724.5 157.5,715" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="170" y="719" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <polyline points="425,518 450,560 450,675" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <line x1="450" y1="705" x2="450" y2="762" stroke="#000000" stroke-width="1.2"/>
+    <text x="462" y="545" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="462" y="745" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="450,678 465,690 450,702 435,690" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="450,680.5 462.5,690 450,699.5 437.5,690" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="450" y="694" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+    <line x1="450" y1="972" x2="450" y2="900" stroke="#000000" stroke-width="1.2"/>
+    <line x1="450" y1="870" x2="450" y2="798" stroke="#000000" stroke-width="1.2"/>
+    <text x="462" y="945" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">1</text>
+    <text x="462" y="825" font-size="11.5" font-family="Arial, sans-serif" fill="#000000">N</text>
+    <!-- Diamond -->
+    <polygon points="450,873 465,885 450,897 435,885" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="450,875.5 462.5,885 450,894.5 437.5,885" fill="none" stroke="#000000" stroke-width="0.9"/>
+    <text x="450" y="889" font-size="11" font-family="'Sarabun', 'Segoe UI', sans-serif" fill="#000000" text-anchor="middle">มี</text>
+  </g>
+
+  <!-- Entities -->
+  <g id="entities">
+
+    <!-- Entity: roles -->
+    <rect x="125.0" y="172.0" width="90" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="170" y="195" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">roles</text>
+
+    <!-- Entity: employee -->
+    <rect x="362.5" y="172.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="410" y="195" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">employee</text>
+
+    <!-- Entity: orders -->
+    <rect x="722.5" y="172.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="770" y="195" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">orders</text>
+
+    <!-- Entity: order_items -->
+    <rect x="717.5" y="382.0" width="105" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <rect x="720.5" y="385.0" width="99" height="30" fill="none" stroke="#000000" stroke-width="1"/>
+    <text x="770" y="405" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">order_items</text>
+
+    <!-- Entity: categories -->
+    <rect x="122.5" y="482.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="170" y="505" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">categories</text>
+
+    <!-- Entity: products -->
+    <rect x="362.5" y="482.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="410" y="505" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">products</text>
+
+    <!-- Entity: product_recipe -->
+    <rect x="712.5" y="592.0" width="115" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <rect x="715.5" y="595.0" width="109" height="30" fill="none" stroke="#000000" stroke-width="1"/>
+    <text x="770" y="615" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">product_recipe</text>
+
+    <!-- Entity: ingredients -->
+    <rect x="982.5" y="592.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1030" y="615" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">ingredients</text>
+
+    <!-- Entity: inventory -->
+    <rect x="982.5" y="822.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1030" y="845" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">inventory</text>
+
+    <!-- Entity: deliveries -->
+    <rect x="122.5" y="812.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="170" y="835" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">deliveries</text>
+
+    <!-- Entity: promotion_products -->
+    <rect x="380.0" y="762.0" width="140" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <rect x="383.0" y="765.0" width="134" height="30" fill="none" stroke="#000000" stroke-width="1"/>
+    <text x="450" y="785" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">promotion_products</text>
+
+    <!-- Entity: promotions -->
+    <rect x="402.5" y="972.0" width="95" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="450" y="995" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">promotions</text>
+
+    <!-- Entity: material_procurement -->
+    <rect x="1317.5" y="592.0" width="145" height="36" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1390" y="615" font-size="12.5" font-family="Arial, sans-serif" fill="#000000" text-anchor="middle">material_procurement</text>
+
+  </g>
+</svg>
+</body>
+</html>

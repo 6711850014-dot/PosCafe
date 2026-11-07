@@ -1,0 +1,672 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1810 1350" width="1810" height="1350" style="background-color: #f8fafc; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <!-- Background grid -->
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#e2e8f0" stroke-width="0.7"/>
+    </pattern>
+    <filter id="shadow" x="-5%" y="-3%" width="112%" height="112%" filterUnits="objectBoundingBox">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
+    </marker>
+    <marker id="circle-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#2563eb" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#e11d48" />
+    </marker>
+    <marker id="circle-rose" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#e11d48" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+    <marker id="arrow-indigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4f46e5" />
+    </marker>
+    <marker id="circle-indigo" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#4f46e5" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0891b2" />
+    </marker>
+    <marker id="circle-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#0891b2" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669" />
+    </marker>
+    <marker id="circle-emerald" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#059669" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#d97706" />
+    </marker>
+    <marker id="circle-amber" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+      <circle cx="5" cy="5" r="3" fill="#d97706" stroke="#ffffff" stroke-width="1.2" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8fafc"/>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Top Banner / Title Header -->
+  <g transform="translate(80, 30)">
+    <rect x="-10" y="-12" width="1670" height="58" rx="10" fill="#ffffff" filter="url(#shadow)" stroke="#e2e8f0"/>
+    <circle cx="16" cy="17" r="14" fill="#4f46e5"/>
+    <text x="16" y="22" font-size="15" font-weight="bold" fill="#ffffff" text-anchor="middle">☕</text>
+    <text x="42" y="16" font-size="19" font-weight="bold" fill="#0f172a">PosCafe Database Relational Schema Visualizer</text>
+    <text x="42" y="30" font-size="11.5" fill="#64748b">ระบบบริหารจัดการร้านกาแฟ (PostgreSQL / Supabase) — 13 ตาราง 12 ความสัมพันธ์ (Relationships)</text>
+    
+    <!-- Legend -->
+    <g transform="translate(1080, 2)">
+      <rect x="0" y="4" width="26" height="17" rx="4" fill="#fef3c7" stroke="#fcd34d" />
+      <text x="13" y="16" font-size="9" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="32" y="17" font-size="12" fill="#334155">Primary Key</text>
+
+      <rect x="110" y="4" width="26" height="17" rx="4" fill="#e0e7ff" stroke="#c7d2fe" />
+      <text x="123" y="16" font-size="9" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="142" y="17" font-size="12" fill="#334155">Foreign Key</text>
+
+      <line x1="225" y1="13" x2="265" y2="13" stroke="#4f46e5" stroke-width="2.2" marker-start="url(#circle-indigo)" marker-end="url(#arrow-indigo)" />
+      <text x="275" y="17" font-size="12" fill="#334155">1-to-N Relation</text>
+    </g>
+  </g>
+
+  <!-- Relationship Connectors -->
+  <g id="relationships">
+
+    <path d="M 80 517.0 C 40 517.0, 40 167.0, 80 167.0" fill="none" stroke="#2563eb" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-blue)" marker-end="url(#arrow-blue)" />
+    <path d="M 490 227.0 C 455 227.0, 465 367.0, 430 367.0" fill="none" stroke="#4f46e5" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-indigo)" marker-end="url(#arrow-indigo)" />
+    <path d="M 490 1057.0 C 440 1057.0, 480 367.0, 430 367.0" fill="none" stroke="#0891b2" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-cyan)" marker-end="url(#arrow-cyan)" />
+    <path d="M 490 647.0 C 455 647.0, 455 167.0, 490 167.0" fill="none" stroke="#4f46e5" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-indigo)" marker-end="url(#arrow-indigo)" />
+    <path d="M 490 907.0 C 435 907.0, 435 167.0, 490 167.0" fill="none" stroke="#0891b2" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-cyan)" marker-end="url(#arrow-cyan)" />
+    <path d="M 870 677.0 C 910 677.0, 900 357.0, 940 357.0" fill="none" stroke="#4f46e5" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-indigo)" marker-end="url(#arrow-indigo)" />
+    <path d="M 940 447.0 C 905 447.0, 905 167.0, 940 167.0" fill="none" stroke="#059669" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-emerald)" marker-end="url(#arrow-emerald)" />
+    <path d="M 940 677.0 C 905 677.0, 905 357.0, 940 357.0" fill="none" stroke="#059669" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-emerald)" marker-end="url(#arrow-emerald)" />
+    <path d="M 940 932.0 C 885 932.0, 885 357.0, 940 357.0" fill="none" stroke="#e11d48" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-rose)" marker-end="url(#arrow-rose)" />
+    <path d="M 940 902.0 C 905 902.0, 905 1062.0, 940 1062.0" fill="none" stroke="#e11d48" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-rose)" marker-end="url(#arrow-rose)" />
+    <path d="M 1300 707.0 C 1340 707.0, 1330 167.0, 1370 167.0" fill="none" stroke="#059669" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-emerald)" marker-end="url(#arrow-emerald)" />
+    <path d="M 1370 432.0 C 1335 432.0, 1335 167.0, 1370 167.0" fill="none" stroke="#d97706" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-amber)" marker-end="url(#arrow-amber)" />
+    <path d="M 1730 727.0 C 1775 727.0, 1775 167.0, 1730 167.0" fill="none" stroke="#d97706" stroke-width="2.2" opacity="0.88" marker-start="url(#circle-amber)" marker-end="url(#arrow-amber)" />
+  </g>
+
+  <!-- Tables -->
+  <g id="tables">
+
+    <!-- Table: roles -->
+    <g id="tbl-roles" transform="translate(80, 110)">
+      <rect x="0" y="0" width="350" height="132" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 342 0 Q 350 0 350 8 L 350 42 L 0 42 Z" fill="#2563eb"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">roles (บทบาทและสิทธิ์)</text>
+
+      <!-- Field: role_id -->
+      <rect x="0.5" y="42" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>role_id</text>
+      <text x="338" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: role_name -->
+      <rect x="0.5" y="72" width="349" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>role_name</text>
+      <text x="338" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: permissions -->
+      <rect x="0.5" y="102" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>permissions</text>
+      <text x="338" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">jsonb</text>
+    </g>
+
+    <!-- Table: employee -->
+    <g id="tbl-employee" transform="translate(80, 310)">
+      <rect x="0" y="0" width="350" height="282" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 342 0 Q 350 0 350 8 L 350 42 L 0 42 Z" fill="#2563eb"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">employee (พนักงาน/ผู้ใช้งาน)</text>
+
+      <!-- Field: employee_id -->
+      <rect x="0.5" y="42" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>employee_id</text>
+      <text x="338" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: username -->
+      <rect x="0.5" y="72" width="349" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>username</text>
+      <text x="338" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: password -->
+      <rect x="0.5" y="102" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>password</text>
+      <text x="338" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(255)</text>
+      <!-- Field: first_name -->
+      <rect x="0.5" y="132" width="349" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>first_name</text>
+      <text x="338" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: last_name -->
+      <rect x="0.5" y="162" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>last_name</text>
+      <text x="338" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: role_id -->
+      <rect x="0.5" y="192" width="349" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="198" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="210" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="211" font-size="11.5" font-weight='bold' fill='#0f172a'>role_id</text>
+      <text x="338" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: phone -->
+      <rect x="0.5" y="222" width="349" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="237" r="2" fill="#94a3b8"/>
+      <text x="28" y="241" font-size="11.5" fill='#334155'>phone</text>
+      <text x="338" y="241" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(15)</text>
+      <!-- Field: is_active -->
+      <rect x="0.5" y="252" width="349" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="267" r="2" fill="#94a3b8"/>
+      <text x="28" y="271" font-size="11.5" fill='#334155'>is_active</text>
+      <text x="338" y="271" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">boolean</text>
+    </g>
+
+    <!-- Table: orders -->
+    <g id="tbl-orders" transform="translate(490, 110)">
+      <rect x="0" y="0" width="380" height="372" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 372 0 Q 380 0 380 8 L 380 42 L 0 42 Z" fill="#4f46e5"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">orders (คำสั่งซื้อ/บิลขาย)</text>
+
+      <!-- Field: order_id -->
+      <rect x="0.5" y="42" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>order_id</text>
+      <text x="368" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: total_amount -->
+      <rect x="0.5" y="72" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>total_amount</text>
+      <text x="368" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: employee_id -->
+      <rect x="0.5" y="102" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="108" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="120" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="121" font-size="11.5" font-weight='bold' fill='#0f172a'>employee_id</text>
+      <text x="368" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: payment_method -->
+      <rect x="0.5" y="132" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>payment_method</text>
+      <text x="368" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: amount_received -->
+      <rect x="0.5" y="162" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>amount_received</text>
+      <text x="368" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: change_amount -->
+      <rect x="0.5" y="192" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="207" r="2" fill="#94a3b8"/>
+      <text x="28" y="211" font-size="11.5" fill='#334155'>change_amount</text>
+      <text x="368" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: order_type -->
+      <rect x="0.5" y="222" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="237" r="2" fill="#94a3b8"/>
+      <text x="28" y="241" font-size="11.5" fill='#334155'>order_type</text>
+      <text x="368" y="241" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(20)</text>
+      <!-- Field: delivery_fee -->
+      <rect x="0.5" y="252" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="267" r="2" fill="#94a3b8"/>
+      <text x="28" y="271" font-size="11.5" fill='#334155'>delivery_fee</text>
+      <text x="368" y="271" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: payment_status -->
+      <rect x="0.5" y="282" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="297" r="2" fill="#94a3b8"/>
+      <text x="28" y="301" font-size="11.5" fill='#334155'>payment_status</text>
+      <text x="368" y="301" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(20)</text>
+      <!-- Field: order_status -->
+      <rect x="0.5" y="312" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="327" r="2" fill="#94a3b8"/>
+      <text x="28" y="331" font-size="11.5" fill='#334155'>order_status</text>
+      <text x="368" y="331" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(20)</text>
+      <!-- Field: created_at -->
+      <rect x="0.5" y="342" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="357" r="2" fill="#94a3b8"/>
+      <text x="28" y="361" font-size="11.5" fill='#334155'>created_at</text>
+      <text x="368" y="361" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">timestamp</text>
+    </g>
+
+    <!-- Table: order_items -->
+    <g id="tbl-order_items" transform="translate(490, 560)">
+      <rect x="0" y="0" width="380" height="192" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 372 0 Q 380 0 380 8 L 380 42 L 0 42 Z" fill="#4f46e5"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">order_items (รายการสินค้าในบิล)</text>
+
+      <!-- Field: order_item_id -->
+      <rect x="0.5" y="42" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>order_item_id</text>
+      <text x="368" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: order_id -->
+      <rect x="0.5" y="72" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="78" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="90" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="91" font-size="11.5" font-weight='bold' fill='#0f172a'>order_id</text>
+      <text x="368" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: product_id -->
+      <rect x="0.5" y="102" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="108" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="120" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="121" font-size="11.5" font-weight='bold' fill='#0f172a'>product_id</text>
+      <text x="368" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: quantity -->
+      <rect x="0.5" y="132" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>quantity</text>
+      <text x="368" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">int</text>
+      <!-- Field: price -->
+      <rect x="0.5" y="162" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>price</text>
+      <text x="368" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+    </g>
+
+    <!-- Table: deliveries -->
+    <g id="tbl-deliveries" transform="translate(490, 820)">
+      <rect x="0" y="0" width="380" height="372" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 372 0 Q 380 0 380 8 L 380 42 L 0 42 Z" fill="#0891b2"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">deliveries (การจัดส่งเดลิเวอรี)</text>
+
+      <!-- Field: delivery_id -->
+      <rect x="0.5" y="42" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>delivery_id</text>
+      <text x="368" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: order_id -->
+      <rect x="0.5" y="72" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="78" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="90" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="91" font-size="11.5" font-weight='bold' fill='#0f172a'>order_id</text>
+      <text x="368" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: customer_name -->
+      <rect x="0.5" y="102" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>customer_name</text>
+      <text x="368" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: customer_phone -->
+      <rect x="0.5" y="132" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>customer_phone</text>
+      <text x="368" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(20)</text>
+      <!-- Field: delivery_address -->
+      <rect x="0.5" y="162" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>delivery_address</text>
+      <text x="368" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+      <!-- Field: delivery_fee -->
+      <rect x="0.5" y="192" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="207" r="2" fill="#94a3b8"/>
+      <text x="28" y="211" font-size="11.5" fill='#334155'>delivery_fee</text>
+      <text x="368" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: rider_id -->
+      <rect x="0.5" y="222" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="228" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="240" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="241" font-size="11.5" font-weight='bold' fill='#0f172a'>rider_id</text>
+      <text x="368" y="241" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: delivery_status -->
+      <rect x="0.5" y="252" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="267" r="2" fill="#94a3b8"/>
+      <text x="28" y="271" font-size="11.5" fill='#334155'>delivery_status</text>
+      <text x="368" y="271" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: notes -->
+      <rect x="0.5" y="282" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="297" r="2" fill="#94a3b8"/>
+      <text x="28" y="301" font-size="11.5" fill='#334155'>notes</text>
+      <text x="368" y="301" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+      <!-- Field: created_at -->
+      <rect x="0.5" y="312" width="379" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="327" r="2" fill="#94a3b8"/>
+      <text x="28" y="331" font-size="11.5" fill='#334155'>created_at</text>
+      <text x="368" y="331" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">timestamp</text>
+      <!-- Field: delivered_at -->
+      <rect x="0.5" y="342" width="379" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="357" r="2" fill="#94a3b8"/>
+      <text x="28" y="361" font-size="11.5" fill='#334155'>delivered_at</text>
+      <text x="368" y="361" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">timestamp</text>
+    </g>
+
+    <!-- Table: categories -->
+    <g id="tbl-categories" transform="translate(940, 110)">
+      <rect x="0" y="0" width="360" height="132" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#059669"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">categories (หมวดหมู่สินค้า)</text>
+
+      <!-- Field: category_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>category_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: category_name -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>category_name</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: description -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>description</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+    </g>
+
+    <!-- Table: products -->
+    <g id="tbl-products" transform="translate(940, 300)">
+      <rect x="0" y="0" width="360" height="222" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#059669"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">products (สินค้าและเครื่องดื่ม)</text>
+
+      <!-- Field: product_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>product_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: product_name -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>product_name</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: price -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>price</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: category_id -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="138" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="150" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="151" font-size="11.5" font-weight='bold' fill='#0f172a'>category_id</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">int</text>
+      <!-- Field: image_url -->
+      <rect x="0.5" y="162" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>image_url</text>
+      <text x="348" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+      <!-- Field: is_available -->
+      <rect x="0.5" y="192" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="207" r="2" fill="#94a3b8"/>
+      <text x="28" y="211" font-size="11.5" fill='#334155'>is_available</text>
+      <text x="348" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">boolean</text>
+    </g>
+
+    <!-- Table: product_recipe -->
+    <g id="tbl-product_recipe" transform="translate(940, 590)">
+      <rect x="0" y="0" width="360" height="162" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#059669"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">product_recipe (สูตรวัตถุดิบสินค้า)</text>
+
+      <!-- Field: recipe_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>recipe_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: product_id -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="78" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="90" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="91" font-size="11.5" font-weight='bold' fill='#0f172a'>product_id</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: ingredient_id -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="108" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="120" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="121" font-size="11.5" font-weight='bold' fill='#0f172a'>ingredient_id</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: quantity -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>quantity</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+    </g>
+
+    <!-- Table: promotion_products -->
+    <g id="tbl-promotion_products" transform="translate(940, 815)">
+      <rect x="0" y="0" width="360" height="132" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#e11d48"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">promotion_products (สินค้าโปรโมชั่น)</text>
+
+      <!-- Field: id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: promotion_id -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="78" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="90" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="91" font-size="11.5" font-weight='bold' fill='#0f172a'>promotion_id</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">int</text>
+      <!-- Field: product_id -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="108" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="120" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="121" font-size="11.5" font-weight='bold' fill='#0f172a'>product_id</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+    </g>
+
+    <!-- Table: promotions -->
+    <g id="tbl-promotions" transform="translate(940, 1005)">
+      <rect x="0" y="0" width="360" height="282" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#e11d48"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">promotions (โปรโมชั่นและส่วนลด)</text>
+
+      <!-- Field: promotion_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>promotion_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: promotion_name -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>promotion_name</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: description -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>description</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+      <!-- Field: discount_percentage -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>discount_percentage</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(5,2)</text>
+      <!-- Field: discount_amount -->
+      <rect x="0.5" y="162" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>discount_amount</text>
+      <text x="348" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: start_date -->
+      <rect x="0.5" y="192" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="207" r="2" fill="#94a3b8"/>
+      <text x="28" y="211" font-size="11.5" fill='#334155'>start_date</text>
+      <text x="348" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+      <!-- Field: end_date -->
+      <rect x="0.5" y="222" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="237" r="2" fill="#94a3b8"/>
+      <text x="28" y="241" font-size="11.5" fill='#334155'>end_date</text>
+      <text x="348" y="241" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+      <!-- Field: is_active -->
+      <rect x="0.5" y="252" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="267" r="2" fill="#94a3b8"/>
+      <text x="28" y="271" font-size="11.5" fill='#334155'>is_active</text>
+      <text x="348" y="271" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">boolean</text>
+    </g>
+
+    <!-- Table: ingredients -->
+    <g id="tbl-ingredients" transform="translate(1370, 110)">
+      <rect x="0" y="0" width="360" height="162" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#d97706"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">ingredients (ข้อมูลวัตถุดิบ)</text>
+
+      <!-- Field: ingredient_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>ingredient_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: ingredient_name -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>ingredient_name</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: unit -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>unit</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(20)</text>
+      <!-- Field: min_quantity -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>min_quantity</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+    </g>
+
+    <!-- Table: inventory -->
+    <g id="tbl-inventory" transform="translate(1370, 345)">
+      <rect x="0" y="0" width="360" height="192" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#d97706"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">inventory (คลังสต็อกวัตถุดิบ)</text>
+
+      <!-- Field: inventory_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>inventory_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: ingredient_id -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="78" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="90" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="91" font-size="11.5" font-weight='bold' fill='#0f172a'>ingredient_id</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: quantity -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="117" r="2" fill="#94a3b8"/>
+      <text x="28" y="121" font-size="11.5" fill='#334155'>quantity</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: purchase_date -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>purchase_date</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+      <!-- Field: expiration_date -->
+      <rect x="0.5" y="162" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>expiration_date</text>
+      <text x="348" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+    </g>
+
+    <!-- Table: material_procurement -->
+    <g id="tbl-material_procurement" transform="translate(1370, 610)">
+      <rect x="0" y="0" width="360" height="342" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#shadow)"/>
+      
+      <!-- Table Header -->
+      <path d="M 0 8 Q 0 0 8 0 L 352 0 Q 360 0 360 8 L 360 42 L 0 42 Z" fill="#d97706"/>
+      <circle cx="16" cy="21.0" r="4" fill="#ffffff" opacity="0.9"/>
+      <text x="28" y="26.0" font-size="13" font-weight="bold" fill="#ffffff">material_procurement (การจัดซื้อวัตถุดิบ)</text>
+
+      <!-- Field: procurement_id -->
+      <rect x="0.5" y="42" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="48" width="24" height="17" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="0.8"/>
+      <text x="22" y="60" font-size="8.5" font-weight="bold" fill="#b45309" text-anchor="middle">PK</text>
+      <text x="42" y="61" font-size="11.5" font-weight='bold' fill='#0f172a'>procurement_id</text>
+      <text x="348" y="61" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">serial</text>
+      <!-- Field: supplier_name -->
+      <rect x="0.5" y="72" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="87" r="2" fill="#94a3b8"/>
+      <text x="28" y="91" font-size="11.5" fill='#334155'>supplier_name</text>
+      <text x="348" y="91" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(100)</text>
+      <!-- Field: ingredient_id -->
+      <rect x="0.5" y="102" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <rect x="10" y="108" width="24" height="17" rx="3" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="0.8"/>
+      <text x="22" y="120" font-size="8.5" font-weight="bold" fill="#4338ca" text-anchor="middle">FK</text>
+      <text x="42" y="121" font-size="11.5" font-weight='bold' fill='#0f172a'>ingredient_id</text>
+      <text x="348" y="121" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: quantity -->
+      <rect x="0.5" y="132" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="147" r="2" fill="#94a3b8"/>
+      <text x="28" y="151" font-size="11.5" fill='#334155'>quantity</text>
+      <text x="348" y="151" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: unit_cost -->
+      <rect x="0.5" y="162" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="177" r="2" fill="#94a3b8"/>
+      <text x="28" y="181" font-size="11.5" fill='#334155'>unit_cost</text>
+      <text x="348" y="181" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: total_cost -->
+      <rect x="0.5" y="192" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="207" r="2" fill="#94a3b8"/>
+      <text x="28" y="211" font-size="11.5" fill='#334155'>total_cost</text>
+      <text x="348" y="211" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">decimal(10,2)</text>
+      <!-- Field: purchase_date -->
+      <rect x="0.5" y="222" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="237" r="2" fill="#94a3b8"/>
+      <text x="28" y="241" font-size="11.5" fill='#334155'>purchase_date</text>
+      <text x="348" y="241" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+      <!-- Field: expiration_date -->
+      <rect x="0.5" y="252" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="267" r="2" fill="#94a3b8"/>
+      <text x="28" y="271" font-size="11.5" fill='#334155'>expiration_date</text>
+      <text x="348" y="271" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">date</text>
+      <!-- Field: invoice_number -->
+      <rect x="0.5" y="282" width="359" height="30" fill="#ffffff" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="297" r="2" fill="#94a3b8"/>
+      <text x="28" y="301" font-size="11.5" fill='#334155'>invoice_number</text>
+      <text x="348" y="301" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">varchar(50)</text>
+      <!-- Field: notes -->
+      <rect x="0.5" y="312" width="359" height="30" fill="#f8fafc" stroke="#f1f5f9" stroke-width="0.8"/>
+      <circle cx="16" cy="327" r="2" fill="#94a3b8"/>
+      <text x="28" y="331" font-size="11.5" fill='#334155'>notes</text>
+      <text x="348" y="331" font-size="10.5" font-family="'Consolas', 'Courier New', monospace" fill="#64748b" text-anchor="end">text</text>
+    </g>
+
+  </g>
+</svg>

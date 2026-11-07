@@ -10,17 +10,29 @@ function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  // คำนวณปลายทางที่จะไปหลังล็อกอิน
+  const getDestinationUrl = (user) => {
+    // ถ้ามี redirect query เช่น /login?redirect=/rider-delivery ให้พาไปหน้านั้น
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectUrl = searchParams.get('redirect');
+    if (redirectUrl) return redirectUrl;
+
+    const userRoleId = Number(user?.role_id) || 0;
+    const userPermissions = Array.isArray(user?.permissions) ? user.permissions : [];
+    
+    // ถ้าเป็นไรเดอร์ (Role = 3 หรือมี menu_rider)
+    if (userPermissions.includes("menu_rider") || userRoleId === 3 || user?.role === 'Rider') {
+      return '/rider-delivery';
+    }
+    return '/pos';
+  };
+
   // 1. ดักจับคนที่ล็อกอินอยู่แล้ว ไม่ให้เข้าหน้า Login ซ้ำ
   useEffect(() => {
     const loggedInUser = sessionStorage.getItem('user');
     if (loggedInUser) {
       const user = JSON.parse(loggedInUser);
-      // ถ้าเป็น Admin ให้กลับไปหน้า reports ถ้าเป็น Cashier ให้ไปหน้า sales
-      if (user.role === 'Admin') {
-        window.location.replace('/pos');
-      } else {
-        window.location.replace('/pos');
-      }
+      window.location.replace(getDestinationUrl(user));
     }
   }, []);
 
@@ -29,7 +41,8 @@ function LoginPage() {
     setErrorMsg('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      // ใช้ relative path '/api/auth/login' เพื่อให้เรียกผ่าน Vite Proxy ได้ทั้งบน localhost และ Cloudflare Tunnel
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -45,21 +58,16 @@ function LoginPage() {
         Swal.fire({
           icon: 'success',
           title: 'เข้าสู่ระบบสำเร็จ!',
-          text: `ยินดีต้อนรับ ${data.user.name} (${data.user.role})`,
+          text: `ยินดีต้อนรับ ${data.user.name || data.user.first_name || ''} (${data.user.role || ''})`,
           showConfirmButton: false,
           timer: 1500 
         }).then(() => {
-          // 2. ใช้ replace เพื่อเปลี่ยนหน้า และลบหน้า Login ออกจากประวัติการกด Back
-          if (data.user.role === 'Admin') {
-            window.location.replace('/pos');
-          } else {
-            window.location.replace('/');
-          }
+          window.location.replace(getDestinationUrl(data.user));
         });
 
       } else {
         // รหัสผ่านผิด หรือไม่พบผู้ใช้
-        setErrorMsg(data.message);
+        setErrorMsg(data.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
       }
     } catch (error) {
       console.error('Error:', error);
